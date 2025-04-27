@@ -477,7 +477,7 @@ extension OperationInput {
             }
         }
 
-        if let encodeKey = key?.urlEncode() {
+        if let encodeKey = key?.urlEncodePath() {
             paths.append(encodeKey)
         }
 

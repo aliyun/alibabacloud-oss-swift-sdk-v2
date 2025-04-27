@@ -221,12 +221,12 @@ final class ClientImplTests: XCTestCase {
         XCTAssertEqual("test-bucket.oss-cn-hangzhou.aliyuncs.com/", host)
 
         input.bucket = "test-bucket"
-        input.key = "test-key+123"
+        input.key = "special/test-key+123"
         host = input.buildHostPath(
             host: "oss-cn-hangzhou.aliyuncs.com",
             addressStyle: .virtualHosted
         )
-        XCTAssertEqual("test-bucket.oss-cn-hangzhou.aliyuncs.com/test-key%2B123", host)
+        XCTAssertEqual("test-bucket.oss-cn-hangzhou.aliyuncs.com/special/test-key%2B123", host)
 
         // path style
         input = OperationInput()
@@ -244,12 +244,12 @@ final class ClientImplTests: XCTestCase {
         XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/test-bucket/", host)
 
         input.bucket = "test-bucket"
-        input.key = "test-key+123"
+        input.key = "special/test-key+123"
         host = input.buildHostPath(
             host: "oss-cn-hangzhou.aliyuncs.com",
             addressStyle: .path
         )
-        XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/test-bucket/test-key%2B123", host)
+        XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/test-bucket/special/test-key%2B123", host)
 
         // cname
         input = OperationInput()
@@ -267,12 +267,12 @@ final class ClientImplTests: XCTestCase {
         XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/", host)
 
         input.bucket = "test-bucket"
-        input.key = "test-key+123"
+        input.key = "special/test-key+123"
         host = input.buildHostPath(
             host: "oss-cn-hangzhou.aliyuncs.com",
             addressStyle: .cname
         )
-        XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/test-key%2B123", host)
+        XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/special/test-key%2B123", host)
     }
 
     func testQueryString() {

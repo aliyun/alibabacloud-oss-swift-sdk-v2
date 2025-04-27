@@ -666,4 +666,53 @@ final class ClientMiscTests: BaseTestCase {
         XCTAssertEqual("text/plain", getResult.contentType)
         XCTAssertEqual("Appendable", getResult.objectType)
     }
+    
+    func testQueryWithSpecialChar() async throws {
+        let client = getDefaultClient()
+        let bucket = randomBucketName()
+        let content = "hello world, hi oss!".data(using: .utf8)!
+
+        await assertNoThrow(try await client.putBucket(PutBucketRequest(bucket: bucket)))
+
+        let key = "special/char-123+ 456.txt"
+        var putRequest = PutObjectRequest(bucket: bucket,
+                                          key: key)
+        putRequest.addParameter("with-plus", "123+456")
+        putRequest.addParameter("with-space", "123 456")
+        putRequest.addParameter("key-plus+", "value-key1")
+        putRequest.addParameter("key space", "value-key2")
+
+        var preResult = try await client.presign(putRequest)
+        XCTAssertNotNil(preResult.signedHeaders)
+        XCTAssertEqual("PUT", preResult.method)
+        XCTAssertNotNil(preResult.expiration)
+        XCTAssertTrue(preResult.url.contains("with-plus=123%2B456"))
+        XCTAssertTrue(preResult.url.contains("with-space=123%20456"))
+        XCTAssertTrue(preResult.url.contains("special/char-123%2B%20456.txt"))
+        XCTAssertTrue(preResult.url.contains("key-plus%2B=value-key1"))
+        XCTAssertTrue(preResult.url.contains("key%20space=value-key2"))
+
+        var urlRequest = URLRequest(url: URL(string: preResult.url,)!)
+        urlRequest.httpMethod = preResult.method
+        var (data, _) = try await URLSession.shared.upload(for: urlRequest,
+                                                                  from: content)
+
+        var getRequest = GetObjectRequest(bucket: bucket,
+                                          key: key)
+        getRequest.addParameter("with-plus", "123+456")
+        getRequest.addParameter("with-space", "123 456")
+        getRequest.addParameter("key-plus+", "value-key1")
+        getRequest.addParameter("key space", "value-key2")
+
+        preResult = try await client.presign(getRequest);
+        XCTAssertNotNil(preResult.signedHeaders);
+        XCTAssertEqual("GET", preResult.method);
+        XCTAssertNotNil(preResult.expiration);
+
+        (data, _) = try await URLSession.shared.data(from: URL(string: preResult.url)!)
+        XCTAssertEqual(data, content)
+        
+        let getResult = try await client.getObject(getRequest)
+        XCTAssertEqual(try getResult.body?.readData(), content)
+    }
 }
