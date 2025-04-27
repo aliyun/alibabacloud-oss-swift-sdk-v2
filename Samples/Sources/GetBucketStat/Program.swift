@@ -1,21 +1,17 @@
+import AlibabaCloudOSS
 import ArgumentParser
 import Foundation
-import AlibabaCloudOSS
 
 struct Program: ParsableCommand {
     @Option(help: "The region in which the bucket is located.")
-    var region: String?
+    var region: String
 
     @Option(help: "The domain names that other services can use to access OSS.")
     var endpoint: String?
 
     @Option(help: "The name of the bucket.")
-    var bucket: String?
-
-    //@Option(help: "The name of the object.")
-    //var key: String?
+    var bucket: String
 }
-
 @main
 struct Main {
     static func main() async {
@@ -23,32 +19,33 @@ struct Main {
 
         do {
             let opts = try Program.parse(args)
-            if opts.region == nil {
-                print("Please specify the region.")
-                return
-            }
-            if opts.bucket == nil {
-                print("Please specify the bucket.")
-                return
-            }
+
+            // Specify the region and other parameters.
+            let region = opts.region
+            let bucket = opts.bucket
+            let endpoint = opts.endpoint
 
             // Using the SDK's default configuration
             // loading credentials values from the environment variables
             let credentialsProvider = EnvironmentCredentialsProvider()
 
             let config = Configuration.default()
-                .withRegion(opts.region!)
+                .withRegion(region)
                 .withCredentialsProvider(credentialsProvider)
 
-            if opts.endpoint != nil {
-                config.withEndpoint(opts.endpoint!) 
+            if let endpoint = endpoint {
+                config.withEndpoint(endpoint)
             }
 
             let client = Client(config)
 
-            let result = try await client.getBucketAcl(GetBucketAclRequest(bucket: opts.bucket!))
+            let result = try await client.getBucketStat(
+                GetBucketStatRequest(
+                    bucket: bucket
+                )
+            )
 
-            print("get bucket acl done\n:\(result)")
+            print("result:\n\(result)")
 
         } catch {
             Program.exit(withError: error)
