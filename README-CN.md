@@ -30,6 +30,10 @@ alibabacloud-oss-swift-sdk-v2 是OSS在swift编译语言下的第二版SDK
 ]
 ```
 
+> **说明:**
+> </br>`AlibabaCloudOSS`包含Bucket基础接口、对象类接口及高级接口（分页器、预签名）等，如果您需要 使用这些接口，请添加依赖`.product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")`
+> </br>`AlibabaCloudOSSExtension`包含除Bucket基础接口以外的配置类接口，如果您需要 使用这些接口，请添加依赖`.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2")`
+
 ### 在Xcode中通过 Swift Package Manager 安装
 - 先在`Xcode`中新建或者打开已有的项目，然后选择`Project`－`Package Dependencies`，点击`+`
 - 搜索`https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git`，点击`Add Package`
@@ -124,9 +128,9 @@ func main() async throws {
         .withRegion(region)
     let client = Client(config)
 
-    // Create the Paginator for the ListObjects operation.
+    // Create the Paginator for the ListObjectsV2 operation.
     // Lists all objects in a bucket
-    for try await result in client.listObjectsPaginator(ListObjectsRequest(bucket: bucket)) {
+    for try await result in client.listObjectsV2Paginator(ListObjectsV2Request(bucket: bucket)) {
         if let objects = result.contents {
             for object in objects {
                 print("object: \(object)")

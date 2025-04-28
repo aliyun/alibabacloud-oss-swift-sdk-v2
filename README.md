@@ -2,7 +2,7 @@
 
 [![GitHub version](https://badge.fury.io/gh/aliyun%2Falibabacloud-oss-swift-sdk-v2.svg)](https://badge.fury.io/gh/aliyun%2Falibabacloud-oss-swift-sdk-v2)
 
-alibabacloud-oss-csharp-sdk-v2 is the Developer Preview for the v2 of the OSS SDK for the Swift programming language
+alibabacloud-oss-swift-sdk-v2 is the Developer Preview for the v2 of the OSS SDK for the Swift programming language
 
 ## [简体中文](README-CN.md)
 
@@ -29,6 +29,10 @@ alibabacloud-oss-csharp-sdk-v2 is the Developer Preview for the v2 of the OSS SD
     .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")
 ]
 ```
+> **Explanation:**
+> </br>`AlibabaCloudOSS` includes Bucket basic interfaces, object class interfaces, and advanced interfaces (paginator, pre signature). If you need to use these interfaces, please add dependencies`.product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")`
+> </br>`AlibabaCloudOSSExtension` includes configuration class interfaces other than the Bucket basic interface. If you need to use these interfaces, please add dependencies`.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2")`
+
 
 ### Install the sdk through Swift Package Manager in Xcode
 - First, create or open an existing project in Xcode, then select `Project`-`Package Dependencies` and click on it`+`
@@ -124,9 +128,9 @@ func main() async throws {
         .withRegion(region)
     let client = Client(config)
 
-    // Create the Paginator for the ListObjects operation.
+    // Create the Paginator for the ListObjectsV2 operation.
     // Lists all objects in a bucket
-    for try await result in client.listObjectsPaginator(ListObjectsRequest(bucket: bucket)) {
+    for try await result in client.listObjectsV2Paginator(ListObjectsV2Request(bucket: bucket)) {
         if let objects = result.contents {
             for object in objects {
                 print("object: \(object)")
