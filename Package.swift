@@ -7,7 +7,7 @@ let swiftSettings: [SwiftSetting] = [
 ]
 
 let package = Package(
-    name: "alibabacloud-oss-v2",
+    name: "alibabacloud-oss-swift-sdk-v2",
     platforms: [
         .macOS(.v10_15),
         .iOS(.v13),

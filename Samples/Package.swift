@@ -28,7 +28,7 @@ let package = Package(
             from: "1.5.0"
         ),
         .package(
-            name: "alibabacloud-oss-v2",
+            name: "alibabacloud-oss-swift-sdk-v2",
             path: "../"
         ),
     ],
@@ -36,7 +36,7 @@ let package = Package(
         .executableTarget(
             name: $0,
             dependencies: [
-                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
+                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ],
             path: "./Sources/\($0)/"
