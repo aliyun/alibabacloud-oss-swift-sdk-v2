@@ -3,6 +3,17 @@
 
 import PackageDescription
 
+let targets = ["AbortMultipartUpload", "AppendObject",
+               "CompleteMultipartUpload", "CopyObject",
+               "DeleteBucket", "DeleteMultipleObjects", "DeleteObject", "DeleteObjectTagging", "DescribeRegions",
+               "GetBucketAcl", "GetBucketInfo", "GetBucketLocation", "GetBucketStat", "GetBucketVersioning", "GetObject", "GetObjectACL", "GetObjectMeta", "GetObjectTagging", "GetObjectToFile", "GetSymlink",
+               "HeadObject",
+               "InitiateMultipartUpload", "IsBucketExist", "IsObjectExist",
+               "ListBuckets", "ListMultipartUploads", "ListObjects", "ListObjectsV2", "ListObjectVersions", "ListParts",
+               "PutBucket", "PutBucketAcl", "PutBucketVersioning", "PutObject", "PutObjectACL", "PutObjectTagging", "PutSymlink",
+               "RestoreObject",
+               "UploadPart", "UploadPartCopy"]
+
 let package = Package(
     name: "alibabacloud-oss-samples",
     platforms: [
@@ -21,51 +32,14 @@ let package = Package(
             path: "../"
         ),
     ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        // Service's operations
+    targets: targets.map {
         .executableTarget(
-            name: "ListBuckets",
+            name: $0,
             dependencies: [
                 .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ],
-            path: "./Sources/ListBuckets/"
-        ),
-        // Bucket's operations
-        .executableTarget(
-            name: "ListObjectsV2",
-            dependencies: [
-                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            path: "./Sources/ListObjectsV2/"
-        ),        
-        .executableTarget(
-            name: "GetBucketStat",
-            dependencies: [
-                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            path: "./Sources/GetBucketStat/"
-        ),
-        .executableTarget(
-            name: "GetBucketAcl",
-            dependencies: [
-                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            path: "./Sources/GetBucketAcl/"
-        ),
-        // Object's operations
-        .executableTarget(
-            name: "PutObject",
-            dependencies: [
-                .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-v2"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            path: "./Sources/PutObject/"
-        ),
-    ]
+            path: "./Sources/\($0)/"
+        )
+    }
 )

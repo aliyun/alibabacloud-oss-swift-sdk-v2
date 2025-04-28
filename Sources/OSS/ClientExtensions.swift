@@ -4,7 +4,7 @@ public extension Client {
     /// You can call this operation to query an object.
     /// - Parameters:
     ///   - request: The request parameter to send
-    ///   - request: Optional, operation options
+    ///   - file: URL of file
     /// - Returns: The result instance.
     @available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *)
     func getObjectToFile(
