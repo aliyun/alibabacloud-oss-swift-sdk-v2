@@ -18,21 +18,24 @@ alibabacloud-oss-swift-sdk-v2 is the Developer Preview for the v2 of the OSS SDK
  
 ## Installing
 ### Install the sdk through Swift Package Manager
-- [Swift Package Manager](https://swift.org/package-manager/) It is a tool for automatically distributing Swift code and has been integrated into the Swift toolchain
-- Add `alibabacloud-oss-swift-sdk-v2` to the `dependencies` of `Package.swift`
+This SDK uses the Swift Package Manager to manage its code dependencies. To use it in your codebase, add a dependency to the package in your own Package.swift dependencies.
 ```swift
-.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", .upToNextMajor(from: "0.1.0-beta"))
-```
-- In your `target`，add `AlibabaCloudOSS` to `dependencies`
-```swift
-.target(name: "YourTarget", dependencies: [
-    .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")
+dependencies: [
+    .package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.1.0-beta")
 ]
 ```
-> **Explanation:**
-> </br>`AlibabaCloudOSS` includes Bucket basic interfaces, object class interfaces, and advanced interfaces (paginator, pre signature). If you need to use these interfaces, please add dependencies`.product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")`
-> </br>`AlibabaCloudOSSExtension` includes configuration class interfaces other than the Bucket basic interface. If you need to use these interfaces, please add dependencies`.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2")`
-
+Then add target dependencies you want to use.
+```swift
+targets: [
+    .target(name: "YourTarget", dependencies: [
+        .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2"),
+        //.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2"),
+    ]),
+]
+```
+> **Note:**
+> </br>`AlibabaCloudOSS` provides bucket basic api, all object api, and high-level api (such as paginator, presinger).
+> </br>`AlibabaCloudOSSExtension` provides other bucket control apis, such as BucketCors.
 
 ### Install the sdk through Swift Package Manager in Xcode
 - First, create or open an existing project in Xcode, then select `Project`-`Package Dependencies` and click on it`+`

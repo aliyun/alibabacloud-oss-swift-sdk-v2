@@ -18,21 +18,24 @@ alibabacloud-oss-swift-sdk-v2 是OSS在swift编译语言下的第二版SDK
  
 ## 安装方法
 ### 通过 Swift Package Manager 安装
-- [Swift Package Manager](https://swift.org/package-manager/) 是用于自动分发Swift代码的工具，已集成到Swift工具链中
-- 添加`alibabacloud-oss-swift-sdk-v2`到`Package.swift`的`dependencies`
+该SDK采用 Swift 包管理器来管理其代码依赖项. 如要在您的代码库中使用，请在您自己的 Package.swift 依赖项中添加对包的依赖项。
 ```swift
-.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", .upToNextMajor(from: "0.1.0-beta"))
-```
-- 在你的`target`中，添加`AlibabaCloudOSS`到`dependencies`
-```swift
-.target(name: "YourTarget", dependencies: [
-    .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")
+dependencies: [
+    .package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", , from: "0.1.0-beta")
 ]
 ```
-
+然后在您的目标中添加目标依赖项。
+```swift
+targets: [
+    .target(name: "YourTarget", dependencies: [
+        .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2"),
+        //.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2"),
+    ]),
+]
+```
 > **说明:**
-> </br>`AlibabaCloudOSS`包含Bucket基础接口、对象类接口及高级接口（分页器、预签名）等，如果您需要 使用这些接口，请添加依赖`.product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2")`
-> </br>`AlibabaCloudOSSExtension`包含除Bucket基础接口以外的配置类接口，如果您需要 使用这些接口，请添加依赖`.product(name: "AlibabaCloudOSSExtension", package: "alibabacloud-oss-swift-sdk-v2")`
+> </br>`AlibabaCloudOSS` 提供了bucket基础接口、对象类接口 和 高级接口（例如 分页器、预签名）。
+> </br>`AlibabaCloudOSSExtension` 包含除bucket基础接口以外的配置类接口, 例如 跨域资源共享接口。
 
 ### 在Xcode中通过 Swift Package Manager 安装
 - 先在`Xcode`中新建或者打开已有的项目，然后选择`Project`－`Package Dependencies`，点击`+`
