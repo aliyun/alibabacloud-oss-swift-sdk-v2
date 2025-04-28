@@ -8,6 +8,12 @@ struct Program: ParsableCommand {
 
     @Option(help: "The domain names that other services can use to access OSS.")
     var endpoint: String?
+
+    @Option(help: "The name of the bucket.")
+    var bucket: String
+
+    @Option(help: "The name of the objects.")
+    var objects: String
 }
 @main
 struct Main {
@@ -19,7 +25,9 @@ struct Main {
 
             // Specify the region and other parameters.
             let region = opts.region
+            let bucket = opts.bucket
             let endpoint = opts.endpoint
+            let objects = opts.objects
 
             // Using the SDK's default configuration
             // loading credentials values from the environment variables
@@ -34,16 +42,19 @@ struct Main {
             }
 
             let client = Client(config)
-
-            // Create the Paginator for the ListBuckets operation.
-            let paginator = client.listBucketsPaginator(ListBucketsRequest())
-
-            // Iterate through the bucket pages
-            for try await page in paginator {
-                for bucket in page.buckets ?? [] {
-                    print("Bucket: \(bucket.name ?? "") \(bucket.storageClass ?? "") \(bucket.location ?? "")")
-                }
+            
+            var deleteObjects: [DeleteObject] = []
+            for object in objects.components(separatedBy: ",") {
+                deleteObjects.append(DeleteObject(key: object))
             }
+
+            let result = try await client.deleteMultipleObjects(
+                DeleteMultipleObjectsRequest(
+                    bucket: bucket,
+                    objects: deleteObjects
+                )
+            )
+            print("result:\n\(result)")
 
         } catch {
             Program.exit(withError: error)

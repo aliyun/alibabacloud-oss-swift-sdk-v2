@@ -8,6 +8,15 @@ struct Program: ParsableCommand {
 
     @Option(help: "The domain names that other services can use to access OSS.")
     var endpoint: String?
+
+    @Option(help: "The name of the bucket.")
+    var bucket: String
+    
+    @Option(help: "The name of the object.")
+    var key: String
+    
+    @Option(help: "The ID that identifies the object to which the part that you want to upload belongs.")
+    var uploadId: String
 }
 @main
 struct Main {
@@ -19,7 +28,10 @@ struct Main {
 
             // Specify the region and other parameters.
             let region = opts.region
+            let bucket = opts.bucket
             let endpoint = opts.endpoint
+            let key = opts.key
+            let uploadId = opts.uploadId
 
             // Using the SDK's default configuration
             // loading credentials values from the environment variables
@@ -35,13 +47,19 @@ struct Main {
 
             let client = Client(config)
 
-            // Create the Paginator for the ListBuckets operation.
-            let paginator = client.listBucketsPaginator(ListBucketsRequest())
+            // Create the Paginator for the ListObjedctsV2 operation.
+            let paginator = client.listPartsPaginator(
+                ListPartsRequest(
+                    bucket: bucket,
+                    key: key,
+                    uploadId: uploadId
+                )
+            )
 
-            // Iterate through the bucket pages
+            // Lists all parts in a bucket
             for try await page in paginator {
-                for bucket in page.buckets ?? [] {
-                    print("Bucket: \(bucket.name ?? "") \(bucket.storageClass ?? "") \(bucket.location ?? "")")
+                for part in page.parts ?? [] {
+                    print("Part number: \(String(describing: part.partNumber)), ETag: \(part.etag ?? ""), size: \(String(describing: part.size)) , last modified: \(String(describing: part.lastModified))")
                 }
             }
 

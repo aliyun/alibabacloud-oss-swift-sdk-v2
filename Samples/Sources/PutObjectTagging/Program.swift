@@ -8,6 +8,15 @@ struct Program: ParsableCommand {
 
     @Option(help: "The domain names that other services can use to access OSS.")
     var endpoint: String?
+
+    @Option(help: "The name of the bucket.")
+    var bucket: String
+
+    @Option(help: "The name of the object.")
+    var key: String
+    
+    @Option(help: "The request body schema.")
+    var tagging: String
 }
 @main
 struct Main {
@@ -19,7 +28,10 @@ struct Main {
 
             // Specify the region and other parameters.
             let region = opts.region
+            let bucket = opts.bucket
             let endpoint = opts.endpoint
+            let key = opts.key
+            let tagging = opts.tagging
 
             // Using the SDK's default configuration
             // loading credentials values from the environment variables
@@ -34,16 +46,26 @@ struct Main {
             }
 
             let client = Client(config)
-
-            // Create the Paginator for the ListBuckets operation.
-            let paginator = client.listBucketsPaginator(ListBucketsRequest())
-
-            // Iterate through the bucket pages
-            for try await page in paginator {
-                for bucket in page.buckets ?? [] {
-                    print("Bucket: \(bucket.name ?? "") \(bucket.storageClass ?? "") \(bucket.location ?? "")")
+            
+            var tags: [Tag] = []
+            for tag in tagging.components(separatedBy: ",") {
+                let keyValue = tag.components(separatedBy: "=")
+                if keyValue.count == 2,
+                   let key = keyValue.first,
+                   let value = keyValue.last {
+                    tags.append(Tag(key: key,
+                                    value: value))
                 }
             }
+
+            let result = try await client.putObjectTagging(
+                PutObjectTaggingRequest(
+                    bucket: bucket,
+                    key: key,
+                    tagging: Tagging(tagSet: TagSet(tags: tags))
+                )
+            )
+            print("result:\n\(result)")
 
         } catch {
             Program.exit(withError: error)

@@ -49,7 +49,7 @@ struct Main {
             // Lists all objects in a bucket
             for try await page in paginator {
                 for content in page.contents ?? [] {
-                    print("Object:\(content.key), \(content.size), \(content.lastModified)")
+                    print("Object key:\(content.key ?? ""), size: \(String(describing: content.size)), last modified: \(String(describing: content.lastModified))")
                 }
             }
 

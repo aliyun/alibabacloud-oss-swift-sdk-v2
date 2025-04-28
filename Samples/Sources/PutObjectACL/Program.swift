@@ -8,6 +8,15 @@ struct Program: ParsableCommand {
 
     @Option(help: "The domain names that other services can use to access OSS.")
     var endpoint: String?
+
+    @Option(help: "The name of the bucket.")
+    var bucket: String
+
+    @Option(help: "The name of the object.")
+    var key: String
+    
+    @Option(help: "The access control list (ACL) of the object.")
+    var objectAcl: String
 }
 @main
 struct Main {
@@ -19,7 +28,10 @@ struct Main {
 
             // Specify the region and other parameters.
             let region = opts.region
+            let bucket = opts.bucket
             let endpoint = opts.endpoint
+            let key = opts.key
+            let objectAcl = opts.objectAcl
 
             // Using the SDK's default configuration
             // loading credentials values from the environment variables
@@ -35,15 +47,14 @@ struct Main {
 
             let client = Client(config)
 
-            // Create the Paginator for the ListBuckets operation.
-            let paginator = client.listBucketsPaginator(ListBucketsRequest())
-
-            // Iterate through the bucket pages
-            for try await page in paginator {
-                for bucket in page.buckets ?? [] {
-                    print("Bucket: \(bucket.name ?? "") \(bucket.storageClass ?? "") \(bucket.location ?? "")")
-                }
-            }
+            let result = try await client.putObjectAcl(
+                PutObjectAclRequest(
+                    bucket: bucket,
+                    key: key,
+                    objectAcl: objectAcl
+                )
+            )
+            print("result:\n\(result)")
 
         } catch {
             Program.exit(withError: error)

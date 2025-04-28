@@ -35,14 +35,11 @@ struct Main {
 
             let client = Client(config)
 
-            // Create the Paginator for the ListBuckets operation.
-            let paginator = client.listBucketsPaginator(ListBucketsRequest())
-
-            // Iterate through the bucket pages
-            for try await page in paginator {
-                for bucket in page.buckets ?? [] {
-                    print("Bucket: \(bucket.name ?? "") \(bucket.storageClass ?? "") \(bucket.location ?? "")")
-                }
+            let result = try await client.describeRegions(
+                DescribeRegionsRequest()
+            )
+            for regionInfo in result.regionInfoList?.regionInfos ?? [] {
+                print("region:\(regionInfo.region ?? "")")
             }
 
         } catch {
