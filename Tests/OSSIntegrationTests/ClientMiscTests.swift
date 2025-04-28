@@ -1,5 +1,8 @@
 import AlibabaCloudOSS
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import XCTest
 
 final class ClientMiscTests: BaseTestCase {
@@ -692,7 +695,7 @@ final class ClientMiscTests: BaseTestCase {
         XCTAssertTrue(preResult.url.contains("key-plus%2B=value-key1"))
         XCTAssertTrue(preResult.url.contains("key%20space=value-key2"))
 
-        var urlRequest = URLRequest(url: URL(string: preResult.url,)!)
+        var urlRequest = URLRequest(url: URL(string: preResult.url)!)
         urlRequest.httpMethod = preResult.method
         var (data, _) = try await URLSession.shared.upload(for: urlRequest,
                                                                   from: content)
