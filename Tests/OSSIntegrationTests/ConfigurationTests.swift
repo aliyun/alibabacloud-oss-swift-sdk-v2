@@ -35,7 +35,7 @@ class ClientConfigurationTests: BaseTestCase {
             .withAdditionalHeaders(["key"])
             .withLogger(LogAgentOSLog(level: .debug))
             .withProxyHost("proxyHost")
-            .withProxyPort("8080")
+            .withProxyPort(8080)
         
         XCTAssertEqual(config.region, "region")
         XCTAssertEqual(config.endpoint, "endpoint")
@@ -63,7 +63,7 @@ class ClientConfigurationTests: BaseTestCase {
         XCTAssertEqual(config.additionalHeaders, ["key"])
         XCTAssertTrue(config.logger is LogAgentOSLog)
         XCTAssertEqual(config.proxyHost, "proxyHost")
-        XCTAssertEqual(config.proxyPort, "8080")
+        XCTAssertEqual(config.proxyPort, 8080)
     }
     
     func testWithDefaultValues() {
