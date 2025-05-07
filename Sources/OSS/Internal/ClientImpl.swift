@@ -179,6 +179,19 @@ class ClientImpl {
         sessionConfig.timeoutIntervalForRequest = config.timeoutIntervalForRequest ?? Defaults.timeoutIntervalForRequest
         sessionConfig.timeoutIntervalForResource = config.timeoutIntervalForResource ?? Defaults.timeoutIntervalForResource
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
+        if let proxyHost = config.proxyHost {
+            var connectionProxyDictionary: [String: Any] = [
+                "HTTPSEnable": true,
+                "HTTPSProxy": proxyHost,
+                "HTTPEnable": true,
+                "HTTPProxy": proxyHost,
+            ]
+            if let proxyPort = config.proxyPort {
+                connectionProxyDictionary["HTTPSPort"] = proxyPort
+                connectionProxyDictionary["HTTPPort"] = proxyPort
+            }
+            sessionConfig.connectionProxyDictionary = connectionProxyDictionary
+        }
         if let maximumConnectionsPerHost = config.maxConnectionsPerHost {
             sessionConfig.httpMaximumConnectionsPerHost = maximumConnectionsPerHost
             delegateQueue.maxConcurrentOperationCount = maximumConnectionsPerHost
