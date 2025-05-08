@@ -64,6 +64,22 @@ public extension Client {
             options: options
         )
     }
+    
+    /// Creates a paginator for ListObjectVersions
+    /// - Parameters:
+    ///   - request: The request parameter to send
+    ///   - options: Optional, paginator options
+    /// - Returns: A paginator instance.
+    func listObjectVersionsPaginator(
+        _ request: ListObjectVersionsRequest,
+        _ options: PaginatorOptions? = nil
+    ) -> ListObjectVersionsPaginator {
+        return ListObjectVersionsPaginator(
+            client: self,
+            request: request,
+            options: options
+        )
+    }
 
     /// Creates a paginator for ListParts
     /// - Parameters:

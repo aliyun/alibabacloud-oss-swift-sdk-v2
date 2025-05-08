@@ -1,6 +1,7 @@
 
 import AlibabaCloudOSS
 import AlibabaCloudOSSExtension
+import Crypto
 import XCTest
 #if canImport(FoundationNetworking)
     import FoundationNetworking
@@ -295,6 +296,102 @@ public class BaseTestCase: XCTestCase {
     func removeTestFile(_ location: String) {
         try? FileManager.default.removeItem(atPath: location)
     }
+}
+
+struct RamRoleArnCredentialProvider: CredentialsProvider {
+    
+    private var roleSessionName: String
+    private var regionId: String
+    private var durationSeconds: Int
+    private let accessKeyId: String
+    private let accessKeySecret: String
+
+    private var roleArn: String
+    private var policy: String?
+
+    public init(
+        accessKeyId: String,
+        accessKeySecret: String,
+        roleArn: String,
+        regionId: String,
+        policy: String? = nil,
+        roleSessionName: String = "defaultSessionName",
+        durationSeconds: Int = 3600,
+    ) {
+        self.accessKeyId = accessKeyId
+        self.accessKeySecret = accessKeySecret
+        self.roleArn = roleArn
+        self.regionId = regionId
+        self.policy = policy
+        self.roleSessionName =  roleSessionName
+        self.durationSeconds = durationSeconds
+    }
+
+    public func getCredentials() async throws -> AlibabaCloudOSS.Credentials {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        var params: [URLQueryItem] = []
+        params.append(URLQueryItem(name: "Action", value: "AssumeRole"))
+        params.append(URLQueryItem(name: "Format", value: "JSON"))
+        params.append(URLQueryItem(name: "Version", value: "2015-04-01"))
+        params.append(URLQueryItem(name: "DurationSeconds", value: "\(durationSeconds)"))
+        params.append(URLQueryItem(name: "RoleArn", value: roleArn))
+        params.append(URLQueryItem(name: "AccessKeyId", value: accessKeyId))
+        params.append(URLQueryItem(name: "RegionId", value: regionId))
+        params.append(URLQueryItem(name: "RoleSessionName", value: roleSessionName))
+        params.append(URLQueryItem(name: "SignatureVersion", value: "1.0"))
+        params.append(URLQueryItem(name: "SignatureMethod", value: "HMAC-SHA1"))
+        params.append(URLQueryItem(name: "Timestamp", value: dateFormatter.string(from: Date())))
+        params.append(URLQueryItem(name: "SignatureNonce", value: (String(TimeInterval(Date().timeIntervalSince1970)) + UUID().uuidString).data(using: .utf8)?.calculateMd5().compactMap { String(format: "%02x", $0) }.joined()))
+        if let policy = policy {
+            params.append(URLQueryItem(name: "Policy", value: policy))
+        }
+
+        let stringToSign = "GET&%2F&".appending(
+            params.compactMap {
+                if let value = $0.value?.urlEncode(),
+                   !value.isEmpty {
+                    return "\($0.name)=\(value)".urlEncode()
+                }
+                return nil
+            }.sorted(by: <).joined(separator: "%26")
+        )
+        
+        let signature = Data(HMAC<Insecure.SHA1>.authenticationCode(for: stringToSign.data(using: .utf8)!, using: SymmetricKey(data: (accessKeySecret + "&").data(using: .utf8)!)))
+        params.append(URLQueryItem(name: "Signature", value: signature.base64EncodedString()))
+
+        do {
+            var components = URLComponents(string: "https://sts.aliyuncs.com")
+            components?.queryItems = params
+            
+            var request = URLRequest(url: components!.url!)
+            request.httpMethod = "GET"
+            request.setValue("sts.aliyuncs.com", forHTTPHeaderField: "host")
+            
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let object = (try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.init(rawValue: 0))) as? [String: Any] ,
+               let credentials = object["Credentials"] as? [String: String] {
+                if let accessKey = credentials["AccessKeyId"],
+                   let secretKey = credentials["AccessKeySecret"],
+                   let expirationTime = credentials["Expiration"],
+                   let token = credentials["SecurityToken"] {
+                    let credentials = Credentials(accessKeyId: accessKey,
+                                                  accessKeySecret: secretKey,
+                                                  securityToken: token,
+                                                  expiration: dateFormatter.date(from: expirationTime))
+                    return credentials
+                }
+            }
+            throw ClientError.credentialsFetchError()
+        } catch {
+            throw ClientError.credentialsFetchError(innerError: error)
+        }
+    }
+    
 }
 
 func assertThrowsAsyncError<T>(

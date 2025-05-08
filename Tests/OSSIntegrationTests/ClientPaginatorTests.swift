@@ -239,6 +239,124 @@ class ClientPaginatorTests: BaseTestCase {
 
         try await cleanBucket(client: getDefaultClient(), bucket: bucket)
     }
+    
+    func testListObjectVersionsPaginatorSuccess() async throws {
+        let client = getDefaultClient()
+        let bucket = randomBucketName()
+        let baseKey = randomObjectName()
+
+        try await createBucket(client: client, bucket: bucket)
+        
+        await assertNoThrow(try await client.putBucketVersioning(
+            PutBucketVersioningRequest(
+                bucket: bucket,
+                versioningConfiguration: VersioningConfiguration(status: "Enabled")
+            )
+        ))
+
+        var objects: [String] = []
+        var deleteMarkers: [String] = []
+        for i in 0 ..< 20 {
+            let key = baseKey + "-\(i)"
+            let request = PutObjectRequest(bucket: bucket,
+                                           key: key,
+                                           body: .data("hello oss".data(using: .utf8)!))
+            try await assertNoThrow(await client.putObject(request))
+            if i >= 10 {
+                try await assertNoThrow(await client.deleteObject(
+                    DeleteObjectRequest(
+                        bucket: bucket,
+                        key: key
+                    )
+                ))
+                deleteMarkers.append(key)
+            }
+            objects.append(key)
+        }
+
+        var listResultVersions: [String] = []
+        var listResultMarkers: [String] = []
+        var request = ListObjectVersionsRequest(bucket: bucket)
+        for try await result in client.listObjectVersionsPaginator(request) {
+            XCTAssertEqual(result.versions?.count, 20)
+            XCTAssertEqual(result.deleteMarkers?.count, 10)
+            for object in result.versions ?? [] {
+                listResultVersions.append(object.key!)
+            }
+            for marker in result.deleteMarkers ?? [] {
+                listResultMarkers.append(marker.key!)
+            }
+        }
+        XCTAssertEqual(listResultVersions.count, objects.count)
+        XCTAssertEqual(listResultMarkers.count, deleteMarkers.count)
+        for object in objects {
+            XCTAssertTrue(listResultVersions.contains(object))
+        }
+        for deleteMarker in deleteMarkers {
+            XCTAssertTrue(listResultVersions.contains(deleteMarker))
+        }
+
+        listResultVersions = []
+        listResultMarkers = []
+        request = ListObjectVersionsRequest(bucket: bucket)
+        for try await result in client.listObjectVersionsPaginator(request, PaginatorOptions(limit: 5)) {
+            XCTAssertEqual((result.versions?.count ?? 0) + (result.deleteMarkers?.count ?? 0), 5)
+            for object in result.versions ?? [] {
+                listResultVersions.append(object.key!)
+            }
+            for marker in result.deleteMarkers ?? [] {
+                listResultMarkers.append(marker.key!)
+            }
+        }
+        XCTAssertEqual(listResultVersions.count, objects.count)
+        XCTAssertEqual(listResultMarkers.count, deleteMarkers.count)
+        for object in objects {
+            XCTAssertTrue(listResultVersions.contains(object))
+        }
+        for deleteMarker in deleteMarkers {
+            XCTAssertTrue(listResultVersions.contains(deleteMarker))
+        }
+
+        try await cleanBucket(client: client, bucket: bucket)
+    }
+
+    func testListObjectVersionsPaginatorFail() async throws {
+        // default
+        var client = getDefaultClient()
+        let bucket = randomBucketName()
+
+        try await createBucket(client: client, bucket: bucket)
+
+        // client error
+        var request = ListObjectVersionsRequest()
+        do {
+            for try await _ in client.listObjectVersionsPaginator(request) {}
+            XCTFail("should throw a error")
+        } catch {
+            let clientError = error as? ClientError
+            XCTAssertEqual("Missing required field, request.bucket.", clientError?.message)
+        }
+
+        // server error
+        let credentialsProvider = AnonymousCredentialsProvider()
+        let config = Configuration.default()
+        config.withCredentialsProvider(credentialsProvider)
+        config.withEndpoint(endpoint)
+        config.withRegion(region)
+        client = Client(config)
+
+        request = ListObjectVersionsRequest(bucket: bucket)
+        do {
+            for try await _ in client.listObjectVersionsPaginator(request) {}
+            XCTFail("should throw a error")
+        } catch {
+            let serverError = error as? ServerError
+            XCTAssertEqual(serverError?.statusCode, 403)
+            XCTAssertEqual(serverError?.code, "AccessDenied")
+        }
+
+        try await cleanBucket(client: getDefaultClient(), bucket: bucket)
+    }
 
     func testListPartsPaginatorSuccess() async throws {
         let client = getDefaultClient()
