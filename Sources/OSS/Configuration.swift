@@ -77,6 +77,9 @@ public class Configuration {
     
     /// Additional signable headers.
     public var additionalHeaders: [String]?
+    
+    /// Proxy host.
+    public var proxyHost: String?
 
     /// oss log agent
     public var logger: LogAgent?
@@ -293,6 +296,16 @@ public extension Configuration {
         self.additionalHeaders = additionalHeaders
         return self
     }
+    
+    /// Set proxy host.
+    /// - Parameter proxyHost: Proxy host
+    /// - Returns: self
+    @discardableResult
+    func withProxyHost(_ proxyHost: String) -> Self {
+        self.proxyHost = proxyHost
+        return self
+    }
+    
     /// Set up logger
     /// - Parameter logger: logger
     /// - Returns: self
