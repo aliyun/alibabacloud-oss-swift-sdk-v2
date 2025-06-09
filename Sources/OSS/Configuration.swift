@@ -59,6 +59,9 @@ public class Configuration {
 
     /// Authentication with OSS Signature Version, Defaults is "v4"
     public var signerVersion: SignerVersion?
+    
+    /// Custom signer
+    public var signer: Signer?
 
     /// Dual-stack endpoints are provided in some regions.
     /// This allows an IPv4 client and an IPv6 client to access a bucket by using the same endpoint.
@@ -285,6 +288,15 @@ public extension Configuration {
     @discardableResult
     func withSignerVersion(_ signerVersion: SignerVersion) -> Self {
         self.signerVersion = signerVersion
+        return self
+    }
+    
+    /// Set custom signer
+    /// - Parameter signer: The custom signer
+    /// - Returns: self
+    @discardableResult
+    func withSigner(_ signer: Signer) -> Self {
+        self.signer = signer
         return self
     }
 

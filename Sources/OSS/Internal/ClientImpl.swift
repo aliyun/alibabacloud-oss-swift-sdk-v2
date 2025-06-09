@@ -154,7 +154,10 @@ class ClientImpl {
     }
 
     static func resolveSigner(_ config: Configuration) -> Signer {
-        switch config.signerVersion {
+        if let signer = config.signer {
+            return signer
+        }
+        return switch config.signerVersion {
         case .v1:
             SignerV1()
         default:

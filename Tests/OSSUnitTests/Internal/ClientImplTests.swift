@@ -116,6 +116,16 @@ final class ClientImplTests: XCTestCase {
             .withSignerVersion(.v1)
         client = ClientImpl(config)
         XCTAssertTrue(client.options.signer.self is SignerV1)
+        
+        config = Configuration.default()
+            .withSigner(RemoteSignerV1(delegate: SignatureDelegateImp()))
+        client = ClientImpl(config)
+        XCTAssertTrue(client.options.signer.self is RemoteSignerV1)
+        
+        config = Configuration.default()
+            .withSigner(RemoteSignerV4(delegate: SignatureDelegateImp()))
+        client = ClientImpl(config)
+        XCTAssertTrue(client.options.signer.self is RemoteSignerV4)
     }
 
     func testResolveAddressStyle() {
@@ -488,5 +498,11 @@ class TestRetryer: Retryer {
 
     func retryDelay(attempt _: Int, error _: Error) -> TimeInterval {
         0
+    }
+}
+
+class SignatureDelegateImp: SignatureDelegate {
+    func signature(info: [String : String]) async throws -> [String : String] {
+        return [:]
     }
 }
