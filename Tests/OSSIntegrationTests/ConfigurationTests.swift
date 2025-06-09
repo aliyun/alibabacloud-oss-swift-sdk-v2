@@ -15,8 +15,6 @@ class ClientConfigurationTests: BaseTestCase {
             .withCredentialsProvider(AnonymousCredentialsProvider())
             .withRetryMaxAttempts(5)
             .withMaxConnectionsPerHost(5)
-            .withBackgroundTransmitService(true)
-            .withBackgroundSesseionIdentifier("id")
             .withTimeoutIntervalForRequest(60)
             .withTimeoutIntervalForResource(60 * 60)
             .withUserAgent("userAgent")
@@ -33,16 +31,17 @@ class ClientConfigurationTests: BaseTestCase {
             .withUseAccelerateEndpoint(true)
             .withSignerVersion(.v4)
             .withAdditionalHeaders(["key"])
-            .withLogger(LogAgentOSLog(level: .debug))
             .withProxyHost("proxyHost:8080")
         
+#if canImport(os)
+        config.withLogger(LogAgentOSLog(level: .debug))
+#endif
+
         XCTAssertEqual(config.region, "region")
         XCTAssertEqual(config.endpoint, "endpoint")
         XCTAssertTrue(config.credentialsProvider is AnonymousCredentialsProvider)
         XCTAssertEqual(config.retryMaxAttempts, 5)
         XCTAssertEqual(config.maxConnectionsPerHost, 5)
-        XCTAssertTrue(config.enableBackgroundTransmitService!)
-        XCTAssertEqual(config.backgroundSesseionIdentifier, "id")
         XCTAssertEqual(config.timeoutIntervalForRequest, 60)
         XCTAssertEqual(config.timeoutIntervalForResource, 60 * 60)
         XCTAssertEqual(config.userAgent, "userAgent")
@@ -60,8 +59,10 @@ class ClientConfigurationTests: BaseTestCase {
         XCTAssertTrue(config.useAccelerateEndpoint ?? false)
         XCTAssertEqual(config.signerVersion, .v4)
         XCTAssertEqual(config.additionalHeaders, ["key"])
-        XCTAssertTrue(config.logger is LogAgentOSLog)
         XCTAssertEqual(config.proxyHost, "proxyHost:8080")
+#if canImport(os)
+        XCTAssertTrue(config.logger is LogAgentOSLog)
+#endif
     }
     
     func testWithDefaultValues() {
@@ -72,8 +73,6 @@ class ClientConfigurationTests: BaseTestCase {
         XCTAssertNil(config.credentialsProvider)
         XCTAssertNil(config.retryMaxAttempts)
         XCTAssertNil(config.maxConnectionsPerHost)
-        XCTAssertNil(config.enableBackgroundTransmitService)
-        XCTAssertNil(config.backgroundSesseionIdentifier)
         XCTAssertNil(config.timeoutIntervalForRequest)
         XCTAssertNil(config.timeoutIntervalForResource)
         XCTAssertNil(config.userAgent)

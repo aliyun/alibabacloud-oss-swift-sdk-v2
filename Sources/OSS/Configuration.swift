@@ -16,12 +16,6 @@ public class Configuration {
     /// Maximum connections per host
     public var maxConnectionsPerHost: Int?
 
-    /// Flag of enabling background file transmit service., default value is `false`
-    public var enableBackgroundTransmitService: Bool?
-
-    /// Sets the session Id for background file transmission
-    public var backgroundSesseionIdentifier: String?
-
     /// Sets request timeout, default value is 15s
     public var timeoutIntervalForRequest: TimeInterval?
 
@@ -135,24 +129,6 @@ public extension Configuration {
     @discardableResult
     func withMaxConnectionsPerHost(_ maxConnectionsPerHost: Int) -> Self {
         self.maxConnectionsPerHost = maxConnectionsPerHost
-        return self
-    }
-
-    /// Set whether to enable the background file transmit service
-    /// - Parameter enableBackgroundTransmitService: enableBackgroundTransmitService
-    /// - Returns: self
-    @discardableResult
-    func withBackgroundTransmitService(_ enableBackgroundTransmitService: Bool) -> Self {
-        self.enableBackgroundTransmitService = enableBackgroundTransmitService
-        return self
-    }
-
-    /// Set up backend session identifier
-    /// - Parameter backgroundSesseionIdentifier: backgroundSesseionIdentifier
-    /// - Returns: self
-    @discardableResult
-    func withBackgroundSesseionIdentifier(_ backgroundSesseionIdentifier: String) -> Self {
-        self.backgroundSesseionIdentifier = backgroundSesseionIdentifier
         return self
     }
 

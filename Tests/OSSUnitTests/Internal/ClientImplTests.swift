@@ -60,28 +60,28 @@ final class ClientImplTests: XCTestCase {
             .withRegion(region)
         client = ClientImpl(config)
         XCTAssertEqual(client.options.endpoint?.host, "oss-\(region).aliyuncs.com")
-        XCTAssertEqual(client.options.endpoint?.scheme, config.httpProtocal?.rawValue)
+        XCTAssertEqual(client.options.endpoint?.scheme, "https")
 
         config = Configuration.default()
             .withRegion(region)
             .withUseInternalEndpoint(true)
         client = ClientImpl(config)
         XCTAssertEqual(client.options.endpoint?.host, "oss-\(region)-internal.aliyuncs.com")
-        XCTAssertEqual(client.options.endpoint?.scheme, config.httpProtocal?.rawValue)
+        XCTAssertEqual(client.options.endpoint?.scheme, "https")
 
         config = Configuration.default()
             .withRegion(region)
             .withUseAccelerateEndpoint(true)
         client = ClientImpl(config)
         XCTAssertEqual(client.options.endpoint?.host, "oss-accelerate.aliyuncs.com")
-        XCTAssertEqual(client.options.endpoint?.scheme, config.httpProtocal?.rawValue)
+        XCTAssertEqual(client.options.endpoint?.scheme, "https")
 
         config = Configuration.default()
             .withRegion(region)
             .withUseDualStackEndpoint(true)
         client = ClientImpl(config)
         XCTAssertEqual(client.options.endpoint?.host, "\(region).oss.aliyuncs.com")
-        XCTAssertEqual(client.options.endpoint?.scheme, config.httpProtocal?.rawValue)
+        XCTAssertEqual(client.options.endpoint?.scheme, "https")
 
         // ssl
         config = Configuration.default()
@@ -89,7 +89,7 @@ final class ClientImplTests: XCTestCase {
             .withHttpProtocal(.http)
         client = ClientImpl(config)
         XCTAssertEqual(client.options.endpoint?.host, "oss-\(region).aliyuncs.com")
-        XCTAssertEqual(client.options.endpoint?.scheme, config.httpProtocal?.rawValue)
+        XCTAssertEqual(client.options.endpoint?.scheme, "http")
     }
 
     func testResolveRetryer() {

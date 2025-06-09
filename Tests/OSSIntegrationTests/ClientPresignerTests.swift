@@ -113,7 +113,7 @@ class ClientPresignerTests: BaseTestCase {
         let expiration = Date().addingTimeInterval(10 * 60)
         let request = InitiateMultipartUploadRequest(bucket: bucket, key: key)
         let result = try await client.presign(request, expiration)
-        XCTAssertEqual(result.method, "PUT")
+        XCTAssertEqual(result.method, "POST")
         XCTAssertTrue(result.url.contains("x-oss-signature-version"))
         XCTAssertTrue(result.url.contains("x-oss-expires"))
         XCTAssertTrue(result.url.contains("x-oss-credential"))

@@ -316,7 +316,7 @@ struct RamRoleArnCredentialProvider: CredentialsProvider {
         regionId: String,
         policy: String? = nil,
         roleSessionName: String = "defaultSessionName",
-        durationSeconds: Int = 3600,
+        durationSeconds: Int = 3600
     ) {
         self.accessKeyId = accessKeyId
         self.accessKeySecret = accessKeySecret

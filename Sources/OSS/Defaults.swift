@@ -12,8 +12,6 @@ public enum Defaults {
     
     public static let httpProtocal = "https"
 
-    public static let backgroundSesseionIdentifier = "com.aliyun.oss.backgroundsession"
-
     // defaults for feature flags
     public static let featureFlags: FeatureFlag = [.correctClockSkew, .autoDetectMimeType, .enableCRC64CheckUpload, .enableCRC64CheckDownload]
 }

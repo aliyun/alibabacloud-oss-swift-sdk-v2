@@ -171,14 +171,7 @@ class ClientImpl {
         let delegate = OSSURLSessionDelegate(enableTLSVerify: config.enableTLSVerify ?? true,
                                              enableFollowRedirect: config.enableFollowRedirect ?? false)
         let delegateQueue = OperationQueue()
-        var sessionConfig: URLSessionConfiguration
-        sessionConfig = .default
-        #if !(os(Linux) || os(Windows))
-            if config.enableBackgroundTransmitService ?? false {
-                let identifier = config.backgroundSesseionIdentifier ?? Defaults.backgroundSesseionIdentifier
-                sessionConfig = .background(withIdentifier: identifier)
-            }
-        #endif
+        let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = config.timeoutIntervalForRequest ?? Defaults.timeoutIntervalForRequest
         sessionConfig.timeoutIntervalForResource = config.timeoutIntervalForResource ?? Defaults.timeoutIntervalForResource
         sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
