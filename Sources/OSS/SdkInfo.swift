@@ -3,7 +3,7 @@ public enum SdkInfo {
     // version
     static let major: String = "0"
     static let minor: String = "1"
-    static let patch: String = "0"
+    static let patch: String = "1"
     static let tag: String = ""
 
     // sdk name
