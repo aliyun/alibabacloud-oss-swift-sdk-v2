@@ -13,6 +13,7 @@ public class BaseTestCase: XCTestCase {
     private let _accessKeySecret: String = "" // your access key secret
     private let _ramRoleArn: String = "" // the ram role arn
     private let _userId: String = "" // the uid
+    private let _resourceGroupId: String = "" // your resource group id
 
     private var _client: Client? = nil
     private var _invalidClient: Client? = nil
@@ -68,6 +69,13 @@ public class BaseTestCase: XCTestCase {
             return _userId
         }
         return ProcessInfo.processInfo.environment["OSS_TEST_USER_ID"] ?? ""
+    }
+    
+    var resourceGroupId: String {
+        if !_resourceGroupId.isEmpty {
+            return _resourceGroupId
+        }
+        return ProcessInfo.processInfo.environment["OSS_TEST_RESOURCE_GROUP_ID"] ?? ""
     }
 
     var payerAccessKeyId: String {
