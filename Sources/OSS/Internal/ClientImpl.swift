@@ -6,8 +6,6 @@ import Foundation
 struct InnerOptions {
     let userAgent: String
     let logger: LogAgent?
-    let urlsession: URLSession
-    let sessionOwner: Bool
 }
 
 struct PresignInnerResult {
@@ -34,19 +32,15 @@ class ClientImpl {
         }
 
         let userAgent = Self.resolveUserAgent(config)
-        let (urlsession, sessionOwner) = Self.resolveURLSession(config)
-
         let innerOpts = InnerOptions(
             userAgent: userAgent,
-            logger: config.logger,
-            urlsession: urlsession,
-            sessionOwner: sessionOwner
+            logger: config.logger
         )
 
         // build execute stack
         let stack = opts.executeMW != nil ?
             ExecuteStack(handler: opts.executeMW!) :
-            ExecuteStack(session: innerOpts.urlsession, logger: innerOpts.logger)
+            ExecuteStack(httpTransport: opts.httpTransport, logger: innerOpts.logger)
 
         stack.push(
             create: { (next: ExecuteMiddleware) in
@@ -86,12 +80,6 @@ class ClientImpl {
         return options.featureFlags.contains(flag)
     }
 
-    deinit {
-        if self.innerOptions.sessionOwner {
-            self.innerOptions.urlsession.finishTasksAndInvalidate()
-        }
-    }
-
     static func resolveConfig(_ config: Configuration) -> ClientOptions {
         let product = Defaults.product
         let region = config.region ?? ""
@@ -100,6 +88,7 @@ class ClientImpl {
         let signer = resolveSigner(config)
         let addressStyle = resolveAddressStyle(config, endpoint)
         let featureFlags = resolveFeatureFlags(config)
+        let httpTransport = resolveTransport(config)
         let opts = ClientOptions(
             product: product,
             region: region,
@@ -110,7 +99,8 @@ class ClientImpl {
             credentialsProvider: config.credentialsProvider,
             addressStyle: addressStyle,
             authMethod: nil,
-            featureFlags: featureFlags
+            featureFlags: featureFlags,
+            httpTransport: httpTransport
         )
         opts.additionalHeaders = config.additionalHeaders ?? opts.additionalHeaders
 
@@ -165,43 +155,20 @@ class ClientImpl {
         }
     }
 
-    static func resolveURLSession(_ config: Configuration) -> (URLSession, Bool) {
-        let owner = true
-
-        let delegate = OSSURLSessionDelegate(enableTLSVerify: config.enableTLSVerify ?? true,
-                                             enableFollowRedirect: config.enableFollowRedirect ?? false)
-        let delegateQueue = OperationQueue()
-        let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = config.timeoutIntervalForRequest ?? Defaults.timeoutIntervalForRequest
-        sessionConfig.timeoutIntervalForResource = config.timeoutIntervalForResource ?? Defaults.timeoutIntervalForResource
-        sessionConfig.requestCachePolicy = .reloadIgnoringLocalCacheData
-        if var proxyHost = config.proxyHost {
-            if !proxyHost.contains("://") {
-                proxyHost = "scheme://" + proxyHost
-            }
-            let url = URL(string: proxyHost)
-            var connectionProxyDictionary: [String: Any] = [:]
-            if url?.scheme == "scheme" ||
-                url?.scheme == "http" {
-                connectionProxyDictionary["HTTPEnable"] = true
-                connectionProxyDictionary["HTTPProxy"] = url?.host
-                connectionProxyDictionary["HTTPPort"] = url?.port
-            }
-            if url?.scheme == "scheme" ||
-                url?.scheme == "https" {
-                connectionProxyDictionary["HTTPSEnable"] = true
-                connectionProxyDictionary["HTTPSProxy"] = url?.host
-                connectionProxyDictionary["HTTPSPort"] = url?.port
-            }
-            sessionConfig.connectionProxyDictionary = connectionProxyDictionary
+    static func resolveTransport(_ config: Configuration) -> HttpTransport {
+        if let transport = config.httpTransport {
+            return transport
         }
-        if let maximumConnectionsPerHost = config.maxConnectionsPerHost {
-            sessionConfig.httpMaximumConnectionsPerHost = maximumConnectionsPerHost
-            delegateQueue.maxConcurrentOperationCount = maximumConnectionsPerHost
-        }
-        return (URLSession(configuration: sessionConfig,
-                           delegate: delegate,
-                           delegateQueue: delegateQueue), owner)
+        
+        var options = HttpTransportOptions()
+        options.enableFollowRedirect = config.enableFollowRedirect
+        options.enableTLSVerify = config.enableTLSVerify
+        options.maxConnectionsPerHost = config.maxConnectionsPerHost
+        options.proxyHost = config.proxyHost
+        options.timeoutIntervalForRequest = config.timeoutIntervalForRequest
+        options.timeoutIntervalForResource = config.timeoutIntervalForResource
+        
+        return URLSessionTransport(options, config.logger)
     }
 
     static func resolveAddressStyle(_ config: Configuration, _ endpoint: URL?) -> AddressStyleType {

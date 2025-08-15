@@ -11,8 +11,8 @@ class ExecuteStack {
     private var _stack: [(CreateMiddleware, String)]
     private var _cached: ExecuteMiddleware?
 
-    init(session: URLSession, logger: LogAgent? = nil) {
-        _handler = URLSessionMiddleware(session, logger)
+    init(httpTransport: HttpTransport, logger: LogAgent? = nil) {
+        _handler = TransportExecuteMiddleware(httpTransport, logger)
         _stack = []
         _cached = nil
     }

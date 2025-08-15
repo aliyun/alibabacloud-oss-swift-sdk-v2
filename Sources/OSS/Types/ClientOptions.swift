@@ -22,6 +22,9 @@ public class ClientOptions {
     public var featureFlags: FeatureFlag
 
     public var additionalHeaders: [String] = []
+    
+    public var httpTransport: HttpTransport
+
     /// The middleware to send request, use for test
     var executeMW: ExecuteMiddleware?
 
@@ -35,7 +38,8 @@ public class ClientOptions {
         credentialsProvider: CredentialsProvider?,
         addressStyle: AddressStyleType,
         authMethod: Swift.String?,
-        featureFlags: FeatureFlag
+        featureFlags: FeatureFlag,
+        httpTransport: HttpTransport
     ) {
         self.product = product
         self.region = region
@@ -47,6 +51,7 @@ public class ClientOptions {
         self.addressStyle = addressStyle
         self.authMethod = authMethod
         self.featureFlags = featureFlags
+        self.httpTransport = httpTransport
     }
 }
 
