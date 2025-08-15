@@ -80,6 +80,9 @@ public class Configuration {
 
     /// oss log agent
     public var logger: LogAgent?
+    
+    /// The HTTP client to invoke API calls with. Defaults to client's default HTTP implementation if null
+    public var httpTransport: HttpTransport?
 
     public static func `default`() -> Configuration {
         return Configuration()
@@ -300,6 +303,15 @@ public extension Configuration {
     @discardableResult
     func withLogger(_ logger: LogAgent) -> Self {
         self.logger = logger
+        return self
+    }
+    
+    /// Set up HttpTransport
+    /// - Parameter httpTransport: httpTransport
+    /// - Returns: self
+    @discardableResult
+    func withHttpTransport(_ httpTransport: HttpTransport) -> Self {
+        self.httpTransport = httpTransport
         return self
     }
 }
