@@ -2,6 +2,9 @@ import Foundation
 #if canImport(FoundationNetworking)
     import FoundationNetworking
 #endif
+#if canImport(Network)
+    import Network
+#endif
 
 struct InnerOptions {
     let userAgent: String
@@ -194,6 +197,22 @@ class ClientImpl {
                 connectionProxyDictionary["HTTPSPort"] = url?.port
             }
             sessionConfig.connectionProxyDictionary = connectionProxyDictionary
+#if canImport(Network)
+            if config.useProxyInNetWork ?? false {
+                if #available(macOS 14.0, iOS 17.0, watchOS 10.0, tvOS 17.0, *),
+                   let host = url?.host,
+                   let port = url?.port,
+                   let nwPort = NWEndpoint.Port(rawValue: UInt16(port)) {
+                    sessionConfig.connectionProxyDictionary = nil
+                    sessionConfig.proxyConfigurations = [
+                        ProxyConfiguration(
+                            httpCONNECTProxy: .hostPort(host: NWEndpoint.Host(host),
+                                                        port: nwPort)
+                        )
+                    ]
+                }
+            }
+#endif
         }
         if let maximumConnectionsPerHost = config.maxConnectionsPerHost {
             sessionConfig.httpMaximumConnectionsPerHost = maximumConnectionsPerHost
