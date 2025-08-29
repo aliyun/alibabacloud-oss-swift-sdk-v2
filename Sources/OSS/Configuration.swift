@@ -72,6 +72,9 @@ public class Configuration {
     /// Set this to `true` to use a accelerate endpoint for the requests.
     public var useAccelerateEndpoint: Bool?
     
+    /// Using proxy settings in the Network framework, avalibale macos(14.0), ios(17.0), watchos(10.0), tvos(17.0)
+    public var useProxyInNetWork: Bool?
+    
     /// Additional signable headers.
     public var additionalHeaders: [String]?
     
@@ -291,6 +294,15 @@ public extension Configuration {
     @discardableResult
     func withProxyHost(_ proxyHost: String) -> Self {
         self.proxyHost = proxyHost
+        return self
+    }
+    
+    /// Set whether to use proxy in NetWork framework.
+    /// - Parameter useProxyInNetWork: Whether to use proxy in NetWork framework
+    /// - Returns: self
+    @discardableResult
+    func withUseProxyInNetWork(_ useProxyInNetWork: Bool) -> Self {
+        self.useProxyInNetWork = useProxyInNetWork
         return self
     }
     

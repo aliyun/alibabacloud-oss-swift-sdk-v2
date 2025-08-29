@@ -7,6 +7,7 @@ final class ConfigurationTests: XCTestCase {
         XCTAssertNotNil(config)
         XCTAssertNil(config.endpoint)
         XCTAssertNil(config.credentialsProvider)
+        XCTAssertNil(config.useProxyInNetWork)
     }
 
     func testConfigurationWithFunc() throws {
@@ -18,9 +19,11 @@ final class ConfigurationTests: XCTestCase {
         config.withRegion("cn-hangzhou")
             .withCredentialsProvider(AnonymousCredentialsProvider())
             .withEndpoint("http://oss-cn-hangzhou.aliyuncs.com")
+            .withUseProxyInNetWork(true)
 
         XCTAssertEqual("http://oss-cn-hangzhou.aliyuncs.com", config.endpoint)
         XCTAssertEqual("cn-hangzhou", config.region)
         XCTAssertNotNil(config.credentialsProvider)
+        XCTAssertNotNil(config.useProxyInNetWork)
     }
 }
