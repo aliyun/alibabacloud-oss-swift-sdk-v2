@@ -17,12 +17,14 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "AlibabaCloudOSS", targets: ["AlibabaCloudOSS"]),
-        .library(name: "AlibabaCloudOSSExtension", targets: ["AlibabaCloudOSSExtension"])
+        .library(name: "AlibabaCloudOSSExtension", targets: ["AlibabaCloudOSSExtension"]),
+        .library(name: "TransportAsyncHTTPClient", targets: ["TransportAsyncHTTPClient"])
     ],
     dependencies: [
          .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
          .package(url: "https://github.com/apple/swift-crypto.git", "1.0.0"..<"4.0.0"),
-         .package(url: "https://github.com/CoreOffice/XMLCoder.git", from: "0.17.1")
+         .package(url: "https://github.com/CoreOffice/XMLCoder.git", from: "0.17.1"),
+         .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.9.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -45,11 +47,21 @@ let package = Package(
             path: "Sources/OSSExtension",
             swiftSettings: swiftSettings
         ),
+        .target(
+            name: "TransportAsyncHTTPClient",
+            dependencies: [
+                "AlibabaCloudOSS",
+                .product(name: "AsyncHTTPClient", package: "async-http-client")
+            ],
+            path: "Sources/TransportAsyncHTTPClient",
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "AlibabaCloudOSSUnitTests",
             dependencies: [
                 "AlibabaCloudOSS",
-                .product(name: "Atomics", package: "swift-atomics")
+                .product(name: "Atomics", package: "swift-atomics"),
+                .product(name: "AsyncHTTPClient", package: "async-http-client")
             ],
             path: "Tests/OSSUnitTests"
         ),
@@ -77,6 +89,15 @@ let package = Package(
                 "AlibabaCloudOSSExtension",
             ],
             path: "Tests/OSSExtensionIntegrationTests",
+            resources: []
+        ),
+        .testTarget(
+            name: "TransportAsyncHTTPClientTests",
+            dependencies: [
+                "AlibabaCloudOSS",
+                "TransportAsyncHTTPClient"
+            ],
+            path: "Tests/TransportAsyncHTTPClientTests",
             resources: []
         )
     ]
