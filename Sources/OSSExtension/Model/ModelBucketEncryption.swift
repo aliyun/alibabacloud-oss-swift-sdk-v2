@@ -20,7 +20,7 @@ public struct ApplyServerSideEncryptionByDefault: Sendable {
     public init( 
         sseAlgorithm: Swift.String? = nil,
         kmsMasterKeyID: Swift.String? = nil,
-        kmsDataEncryption: Swift.String? = nil,
+        kmsDataEncryption: Swift.String? = nil
     ) {
         self.sseAlgorithm = sseAlgorithm
         self.kmsMasterKeyID = kmsMasterKeyID
@@ -47,7 +47,7 @@ public struct ServerSideEncryptionRule: Sendable {
     public var applyServerSideEncryptionByDefault: ApplyServerSideEncryptionByDefault?
 
     public init( 
-        applyServerSideEncryptionByDefault: ApplyServerSideEncryptionByDefault? = nil,
+        applyServerSideEncryptionByDefault: ApplyServerSideEncryptionByDefault? = nil
     ) { 
         self.applyServerSideEncryptionByDefault = applyServerSideEncryptionByDefault
     }

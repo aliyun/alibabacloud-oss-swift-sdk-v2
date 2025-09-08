@@ -14,7 +14,7 @@ public struct UserDefinedLogFieldsConfiguration: Sendable {
 
     public init( 
         headerSet: HeaderSet? = nil,
-        paramSet: ParamSet? = nil,
+        paramSet: ParamSet? = nil
     ) { 
         self.headerSet = headerSet
         self.paramSet = paramSet
@@ -42,7 +42,7 @@ public struct LoggingEnabled: Sendable {
 
     public init( 
         targetBucket: Swift.String? = nil,
-        targetPrefix: Swift.String? = nil,
+        targetPrefix: Swift.String? = nil
     ) {
         self.targetPrefix = targetPrefix
         self.targetBucket = targetBucket
@@ -64,7 +64,7 @@ public struct BucketLoggingStatus: Sendable {
     public var loggingEnabled: LoggingEnabled?
 
     public init( 
-        loggingEnabled: LoggingEnabled? = nil,
+        loggingEnabled: LoggingEnabled? = nil
     ) { 
         self.loggingEnabled = loggingEnabled
     }
@@ -85,7 +85,7 @@ public struct HeaderSet: Sendable {
     public var headers: [Swift.String]?
 
     public init( 
-        headers: [Swift.String]? = nil,
+        headers: [Swift.String]? = nil
     ) { 
         self.headers = headers
     }
@@ -106,7 +106,7 @@ public struct ParamSet: Sendable {
     public var parameters: [Swift.String]?
 
     public init( 
-        parameters: [Swift.String]? = nil,
+        parameters: [Swift.String]? = nil
     ) { 
         self.parameters = parameters
     }

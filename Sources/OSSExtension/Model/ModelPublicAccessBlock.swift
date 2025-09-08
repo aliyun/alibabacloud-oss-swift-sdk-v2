@@ -10,7 +10,7 @@ public struct PublicAccessBlockConfiguration: Sendable {
     public var blockPublicAccess: Swift.Bool?
 
     public init(
-        blockPublicAccess: Swift.Bool? = nil,
+        blockPublicAccess: Swift.Bool? = nil
     ) {
         self.blockPublicAccess = blockPublicAccess
     }

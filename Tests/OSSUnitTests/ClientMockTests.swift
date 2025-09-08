@@ -798,7 +798,7 @@ final class ClientMockTests: XCTestCase {
             .withRegion("cn-hangzhou")
             .withEndpoint("www.cname.com")
             .withAdditionalHeaders(["additionalKey"])
-            .withCredentialsProvider(EnvironmentCredentialsProvider())
+            .withCredentialsProvider(StaticCredentialsProvider(accessKeyId: "ak", accessKeySecret: "sk"))
         
         // consistent
         let mock = MockProcessRequest { request, context in

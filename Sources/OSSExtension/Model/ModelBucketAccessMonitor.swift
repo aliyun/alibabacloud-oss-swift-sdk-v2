@@ -20,7 +20,7 @@ public struct AccessMonitorConfiguration: Sendable {
     public var status: Swift.String?
 
     public init( 
-        status: Swift.String? = nil,
+        status: Swift.String? = nil
     ) { 
         self.status = status
     }

@@ -10,7 +10,7 @@ public struct RefererList: Sendable {
     public var referers: [Swift.String]?
 
     public init( 
-        referers: [Swift.String]? = nil,
+        referers: [Swift.String]? = nil
     ) { 
         self.referers = referers
     }
@@ -31,7 +31,7 @@ public struct RefererBlacklist: Sendable {
     public var referers: [Swift.String]?
 
     public init( 
-        referers: [Swift.String]? = nil,
+        referers: [Swift.String]? = nil
     ) { 
         self.referers = referers
     }
@@ -74,7 +74,7 @@ public struct RefererConfiguration: Sendable {
         allowTruncateQueryString: Swift.Bool? = nil,
         truncatePath: Swift.Bool? = nil,
         refererList: RefererList? = nil,
-        refererBlacklist: RefererBlacklist? = nil,
+        refererBlacklist: RefererBlacklist? = nil
     ) { 
         self.allowEmptyReferer = allowEmptyReferer
         self.allowTruncateQueryString = allowTruncateQueryString

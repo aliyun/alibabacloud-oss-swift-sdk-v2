@@ -14,7 +14,7 @@ public struct TLS: Sendable {
 
     public init( 
         enable: Swift.Bool? = nil,
-        tlsVersions: [Swift.String]? = nil,
+        tlsVersions: [Swift.String]? = nil
     ) {
         self.enable = enable
         self.tlsVersions = tlsVersions
@@ -38,7 +38,7 @@ public struct HttpsConfiguration: Sendable {
     public var tls: TLS?
 
     public init( 
-        tls: TLS? = nil,
+        tls: TLS? = nil
     ) {
         self.tls = tls
     }

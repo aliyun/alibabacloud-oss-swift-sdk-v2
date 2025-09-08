@@ -35,7 +35,7 @@ public struct WormConfiguration {
         state: Swift.String? = nil,
         retentionPeriodInDays: Swift.Int? = nil,
         creationDate: Swift.String? = nil,
-        expirationDate: Swift.String? = nil,
+        expirationDate: Swift.String? = nil
     ) { 
         self.wormId = wormId
         self.state = state
@@ -62,7 +62,7 @@ public struct InitiateWormConfiguration : Sendable {
     public var retentionPeriodInDays: Swift.Int?
 
     public init( 
-        retentionPeriodInDays: Swift.Int? = nil,
+        retentionPeriodInDays: Swift.Int? = nil
     ) { 
         self.retentionPeriodInDays = retentionPeriodInDays
     }
@@ -81,7 +81,7 @@ public struct ExtendWormConfiguration : Sendable {
     public var retentionPeriodInDays: Swift.Int?
 
     public init( 
-        retentionPeriodInDays: Swift.Int? = nil,
+        retentionPeriodInDays: Swift.Int? = nil
     ) { 
         self.retentionPeriodInDays = retentionPeriodInDays
     }

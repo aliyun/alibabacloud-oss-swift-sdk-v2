@@ -10,7 +10,7 @@ public struct BucketResourceGroupConfiguration: Sendable {
     public var resourceGroupId: Swift.String?
 
     public init( 
-        resourceGroupId: Swift.String? = nil,
+        resourceGroupId: Swift.String? = nil
     ) { 
         self.resourceGroupId = resourceGroupId
     }

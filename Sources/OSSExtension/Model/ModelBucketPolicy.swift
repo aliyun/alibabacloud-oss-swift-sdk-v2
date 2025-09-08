@@ -10,7 +10,7 @@ public struct PolicyStatus: Sendable {
     public var isPublic: Swift.Bool?
 
     public init( 
-        isPublic: Swift.Bool? = nil,
+        isPublic: Swift.Bool? = nil
     ) { 
         self.isPublic = isPublic
     }
