@@ -1253,28 +1253,24 @@ final class ClientObjectBasicTests: BaseTestCase {
 
     func testAppendObjectWithProgress() async throws {
         let objectKey = randomObjectName()
-        let size = 5 * 1024 * 1024
-        let file = URL(fileURLWithPath: createTestFile(randomFileName(), size)!)
-        let totalBytesSented = ValueActor(value: 0)
+        let size: Int64 = 5 * 1024 * 1024
+        let file = URL(fileURLWithPath: createTestFile(randomFileName(), Int(size))!)
+        nonisolated(unsafe) var totalBytesSented: Int64 = 0
 
         var request = AppendObjectRequest(bucket: bucketName,
                                           key: objectKey,
                                           position: 0,
                                           body: .file(file))
         request.progress = ProgressClosure { bytesSent, totalBytesSent, totalBytesExpectedToSend in
-            Task {
-                await totalBytesSented.setValue(value: totalBytesSented.getValue() + Int(bytesSent))
-                let value = await totalBytesSented.getValue()
-                XCTAssertEqual(value, Int(totalBytesSent))
-                XCTAssertEqual(Int(totalBytesExpectedToSend), size)
-            }
+            totalBytesSented += bytesSent
+            XCTAssertEqual(totalBytesSented, totalBytesSent)
+            XCTAssertEqual(totalBytesExpectedToSend, size)
         }
         let result = try await client?.appendObject(request)
         XCTAssertEqual(result?.statusCode, 200)
         XCTAssertNotNil(result?.nextAppendPosition)
         XCTAssertNotNil(result?.hashCrc64ecma)
-        let value = await totalBytesSented.getValue()
-        XCTAssertEqual(value, Int(size))
+        XCTAssertEqual(totalBytesSented, size)
 
         let deleteReqeust = DeleteObjectRequest(bucket: bucketName, key: objectKey)
         let _ = try await client?.deleteObject(deleteReqeust)
