@@ -19,6 +19,14 @@ final class ClientBucketResourceGroupTests: BaseTestCase {
     }
         
     func testPutAndGetBucketResourceGroupSuccess() async throws {
+        
+        let resourceGroupId = try await client?.getBucketInfo(
+            GetBucketInfoRequest(
+                bucket: bucketName
+            )
+        ).bucketInfo?.bucket?.resourceGroupId
+        XCTAssertNotNil(resourceGroupId)
+        
         // PutBucketResourceGroup
         try await assertNoThrow(await client?.putBucketResourceGroup(PutBucketResourceGroupRequest(
             bucket: bucketName,

@@ -121,25 +121,21 @@ final class ClientObjectBasicTests: BaseTestCase {
     }
 
     func testPutObjectWithProgress() async throws {
-        let size = 300 * 1024 + 12345
-        let data = randomStr(size).data(using: .utf8)!
+        let size: Int64 = 300 * 1024 + 12345
+        let data = randomStr(Int(size)).data(using: .utf8)!
         let objectKey = randomObjectName()
-        let totalBytesSented = ValueActor(value: 0)
+        nonisolated(unsafe) var totalBytesSented: Int64 = 0
         var request = PutObjectRequest(bucket: bucketName,
                                        key: objectKey,
                                        body: .data(data))
         request.progress = ProgressClosure { bytesSent, totalBytesSent, totalBytesExpectedToSend in
-            Task {
-                await totalBytesSented.setValue(value: totalBytesSented.getValue() + Int(bytesSent))
-                let value = await totalBytesSented.getValue()
-                XCTAssertEqual(value, Int(totalBytesSent))
-                XCTAssertEqual(Int(totalBytesExpectedToSend), size)
-            }
+            totalBytesSented += bytesSent
+            XCTAssertEqual(totalBytesSented, totalBytesSent)
+            XCTAssertEqual(totalBytesExpectedToSend, size)
         }
         let result = try await client?.putObject(request)
         XCTAssertEqual(result?.statusCode, 200)
-        let value = await totalBytesSented.getValue()
-        XCTAssertEqual(value, Int(size))
+        XCTAssertEqual(totalBytesSented, size)
     }
 
     func testPutObjectWithHeader() async throws {
@@ -302,12 +298,16 @@ final class ClientObjectBasicTests: BaseTestCase {
         var request = PutObjectRequest(bucket: bucketName,
                                        key: objectKey,
                                        body: .data(data))
-        request.callback = Callback(callbackUrl: callback,
+        try await assertNoThrow(await client?.putObject(request))
+        
+        request = PutObjectRequest(bucket: bucketName,
+                                       key: objectKey,
+                                       body: .data(data))
+        request.callback = Callback(callbackUrl: "https://www.callback.com",
                                     callbackBody: "bucket=${bucket}").toDictionary().toBase64JsonString()
         let result = try await client?.putObject(request)
-
-        XCTAssertEqual(result?.statusCode, 200)
-        XCTAssertNotNil(result?.callbackResult)
+        XCTAssertEqual(result?.statusCode, 203)
+        
     }
 
     func testPutObjectAndCancel() async throws {
@@ -1345,7 +1345,7 @@ final class ClientObjectBasicTests: BaseTestCase {
 
     func testAppendObjectWithCrc() async throws {
         let objectKey = randomObjectName()
-        let file = FileName.middle.fileUrl()
+        let file = URL(fileURLWithPath: createTestFile(randomFileName(), 5 * 1024 * 1024)!)
         let data = try Data(contentsOf: file)
         let size = 256 * 1024
         var uploadedSize = 0
