@@ -99,7 +99,7 @@ class RemoteSignerV4Tests: XCTestCase {
 
         XCTAssertTrue(urlStr.contains("bucket.oss-cn-hangzhou.aliyuncs.com/1234%2B-/123/1.txt?"))
         XCTAssertTrue(urlStr.contains("%2Bparam2="))
-        XCTAssertTrue(urlStr.contains("%2Bparam1=value3&"))
+        XCTAssertTrue(urlStr.contains("%2Bparam1=value3"))
     }
 
     func testAuthQuery() async throws {

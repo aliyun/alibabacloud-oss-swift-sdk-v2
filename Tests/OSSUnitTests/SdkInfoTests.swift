@@ -3,7 +3,7 @@ import XCTest
 
 class SdkInfoTests: XCTestCase {
     func testVersion() {
-        XCTAssertTrue(SdkInfo.version().contains("0.1."))
+        XCTAssertEqual("0.1.1", SdkInfo.version())
     }
 
     func testName() {
