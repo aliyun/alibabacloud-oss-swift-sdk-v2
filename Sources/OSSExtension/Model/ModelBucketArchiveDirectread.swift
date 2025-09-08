@@ -13,7 +13,7 @@ public struct ArchiveDirectReadConfiguration: Sendable {
     public var enabled: Swift.Bool?
 
     public init( 
-        enabled: Swift.Bool? = nil,
+        enabled: Swift.Bool? = nil
     ) { 
         self.enabled = enabled
     }

@@ -10,7 +10,7 @@ public struct RequestPaymentConfiguration: Sendable {
     public var payer: Swift.String?
 
     public init( 
-        payer: Swift.String? = nil,
+        payer: Swift.String? = nil
     ) { 
         self.payer = payer
     }

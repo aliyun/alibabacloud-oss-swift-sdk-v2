@@ -85,7 +85,7 @@ extension Client {
             method: "POST",
             headers: [
                 "Content-Type": "application/xml"
-            ],
+            ]
         ) 
         input.bucket = try request.bucket.ensureRequired(field: "request.bucket")
         try request.wormId.ensureRequired(field: "request.wormId")
