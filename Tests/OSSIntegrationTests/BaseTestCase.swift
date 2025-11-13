@@ -218,7 +218,12 @@ public class BaseTestCase: XCTestCase {
                 let object = DeleteObject(key: version.key, versionId: version.versionId)
                 objects.append(object)
             }
-            let deleteRequest = DeleteMultipleObjectsRequest(bucket: bucket, objects: objects)
+            let deleteRequest = DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    objects: objects
+                )
+            )
             try await assertNoThrow(await client.deleteMultipleObjects(deleteRequest))
         }
         if let deleteMarkers = listVersionResult.deleteMarkers {
@@ -227,7 +232,12 @@ public class BaseTestCase: XCTestCase {
                 let object = DeleteObject(key: deleteMarker.key, versionId: deleteMarker.versionId)
                 objects.append(object)
             }
-            let deleteRequest = DeleteMultipleObjectsRequest(bucket: bucket, objects: objects)
+            let deleteRequest = DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    objects: objects
+                )
+            )
             try await assertNoThrow(await client.deleteMultipleObjects(deleteRequest))
         }
 
@@ -241,7 +251,12 @@ public class BaseTestCase: XCTestCase {
                 let object = DeleteObject(key: content.key)
                 objects.append(object)
             }
-            let deleteRequest = DeleteMultipleObjectsRequest(bucket: bucket, objects: objects)
+            let deleteRequest = DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    objects: objects
+                )
+            )
             try await assertNoThrow(await client.deleteMultipleObjects(deleteRequest))
         }
 
