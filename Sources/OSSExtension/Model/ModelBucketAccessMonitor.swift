@@ -18,18 +18,24 @@ public struct AccessMonitorConfiguration: Sendable {
     /// - Disabled: Access tracking is disabled.
     /// Sees AccessMonitorStatusType for supported values.
     public var status: Swift.String?
+    
+    
+    /// Only effective when Status is Enabled, indicating whether it supports updating the source data's LastAccesstime when CopyObject/UploadPartCopy is used
+    public var allowCopy: Bool?
 
     public init( 
-        status: Swift.String? = nil
-    ) { 
+        status: Swift.String? = nil,
+        allowCopy: Bool? = nil
+    ) {
         self.status = status
+        self.allowCopy = allowCopy
     }
 }
 
 extension AccessMonitorConfiguration: Codable {
     enum CodingKeys: String, CodingKey { 
         case status = "Status"
-    
+        case allowCopy = "AllowCopy"
     }
 }
 
