@@ -167,8 +167,12 @@ final class ClientBucketVersioningTests: BaseTestCase {
         for i in 0 ..< 10 {
             objects.append(DeleteObject(key: keyPrefix + "-\(i)"))
         }
-        try await assertNoThrow(await client?.deleteMultipleObjects(DeleteMultipleObjectsRequest(bucket: bucketName,
-                                                                                                 objects: objects)))
+        try await assertNoThrow(await client?.deleteMultipleObjects(DeleteMultipleObjectsRequest(
+            bucket: bucketName,
+            delete: Delete(
+                objects: objects
+            )
+        )))
         request = ListObjectVersionsRequest(bucket: bucketName)
         result = try await client?.listObjectVersions(request)
         XCTAssertEqual(result?.statusCode, 200)

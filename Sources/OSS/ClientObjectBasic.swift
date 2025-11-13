@@ -285,6 +285,7 @@ public extension Client {
             ]
         )
         input.bucket = try request.bucket.ensureRequired(field: "request.bucket")
+        try request.delete.ensureRequired(field: "request.delete")
 
         var req = request
         try Serde.serializeInput(&req, &input, [Serde.serializeDeleteMultipleObjects, Serde.addContentMd5])
@@ -292,7 +293,7 @@ public extension Client {
         var output = try await clientImpl.execute(with: &input, args: options)
 
         var result = DeleteMultipleObjectsResult()
-        let deserialize: [SerdeDeserializeDelegate] = request.quiet ?? false ? [] : [Serde.deserializeDeleteMultipleObjects]
+        let deserialize: [SerdeDeserializeDelegate] = request.delete?.quiet ?? false ? [] : [Serde.deserializeDeleteMultipleObjects]
         try Serde.deserializeOutput(&result, &output, deserialize)
 
         return result

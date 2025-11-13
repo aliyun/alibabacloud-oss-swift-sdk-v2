@@ -303,9 +303,11 @@ class SerdeObjectBasicTests: XCTestCase {
         // normal
         request = DeleteMultipleObjectsRequest()
         request.encodingType = "url"
-        request.quiet = true
-        request.objects = [DeleteObject(key: "key1", versionId: "versionId1"),
-                           DeleteObject(key: "key2", versionId: "versionId2")]
+        request.delete = Delete(
+            quiet: true,
+            objects: [DeleteObject(key: "key1", versionId: "versionId1"),
+                      DeleteObject(key: "key2", versionId: "versionId2")]
+        )
         try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
         XCTAssertNotNil(input.headers["Encoding-Type"])
 
