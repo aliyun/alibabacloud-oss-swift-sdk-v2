@@ -15,11 +15,13 @@ class SerdeBucketAccessMonitorTests: XCTestCase {
             """
             <AccessMonitorConfiguration>\
             <Status>Enabled</Status>\
+            <AllowCopy>true</AllowCopy>\
             </AccessMonitorConfiguration>
             """
         request = PutBucketAccessMonitorRequest(
             accessMonitorConfiguration: AccessMonitorConfiguration(
-                status: "Enabled"
+                status: "Enabled",
+                allowCopy: true
             )
         )
         try Serde.serializeInput(&request, &input, [Serde.serializePutBucketAccessMonitor])
@@ -38,6 +40,7 @@ class SerdeBucketAccessMonitorTests: XCTestCase {
             """
             <AccessMonitorConfiguration>\
             <Status>Enabled</Status>\
+            <AllowCopy>true</AllowCopy>\
             </AccessMonitorConfiguration>
             """
         output = OperationOutput(statusCode: 200,
@@ -46,5 +49,6 @@ class SerdeBucketAccessMonitorTests: XCTestCase {
         result = GetBucketAccessMonitorResult()
         XCTAssertNoThrow(try Serde.deserializeOutput(&result, &output, [Serde.deserializeGetBucketAccessMonitor]))
         XCTAssertEqual(result.accessMonitorConfiguration?.status, "Enabled")
+        XCTAssertEqual(result.accessMonitorConfiguration?.allowCopy, true)
     }
 }

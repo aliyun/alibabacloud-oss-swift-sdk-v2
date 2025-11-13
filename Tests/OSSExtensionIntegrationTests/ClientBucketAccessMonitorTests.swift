@@ -22,7 +22,10 @@ final class ClientBucketAccessMonitorTests: BaseTestCase {
         // PutBucketAccessMonitor
         try await assertNoThrow(await client?.putBucketAccessMonitor(PutBucketAccessMonitorRequest(
             bucket: bucketName,
-            accessMonitorConfiguration: AccessMonitorConfiguration(status: "Enabled")
+            accessMonitorConfiguration: AccessMonitorConfiguration(
+                status: "Enabled",
+                allowCopy: true
+            )
         )))
         
         // GetBucketAccessMonitor
@@ -30,6 +33,7 @@ final class ClientBucketAccessMonitorTests: BaseTestCase {
             GetBucketAccessMonitorRequest(bucket: bucketName)
         )
         XCTAssertEqual(result?.accessMonitorConfiguration?.status, "Enabled")
+        XCTAssertEqual(result?.accessMonitorConfiguration?.allowCopy, true)
     }
     
     func testPutBucketAccessMonitorFail() async throws {
