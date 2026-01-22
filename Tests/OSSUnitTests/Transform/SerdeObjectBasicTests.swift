@@ -569,4 +569,18 @@ class SerdeObjectBasicTests: XCTestCase {
         XCTAssertEqual("Expires-time", result.expires)
         XCTAssertEqual("versionId-123", result.versionId)
     }
+    
+    func testSerializeSealAppendObject() throws {
+        var input = OperationInput()
+
+        var request = SealAppendObjectRequest()
+        try Serde.serializeInput(&request, &input, [Serde.serializeSealAppendObject])
+        XCTAssertNil(input.parameters["position"] as Any?)
+
+        // normal
+        request = SealAppendObjectRequest()
+        request.position = 1
+        try Serde.serializeInput(&request, &input, [Serde.serializeSealAppendObject])
+        XCTAssertEqual(Int(input.parameters["position"]!!), request.position)
+    }
 }
