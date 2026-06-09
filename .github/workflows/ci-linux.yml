@@ -18,6 +18,7 @@ jobs:
     name: Swift ${{ matrix.swift }} on Linux
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - swift: "5.9"
