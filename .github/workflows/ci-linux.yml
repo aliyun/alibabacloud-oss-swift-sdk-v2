@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        swift: ["6.0", "6.1"]
+        swift: ["5.9", "6.0", "6.1"]
 
     steps:
       - uses: actions/checkout@v4
