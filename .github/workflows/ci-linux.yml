@@ -16,10 +16,16 @@ concurrency:
 jobs:
   build-and-test:
     name: Swift ${{ matrix.swift }} on Linux
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        swift: ["5.9", "6.0", "6.1"]
+        include:
+          - swift: "5.9"
+            os: ubuntu-22.04
+          - swift: "6.0"
+            os: ubuntu-latest
+          - swift: "6.1"
+            os: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
