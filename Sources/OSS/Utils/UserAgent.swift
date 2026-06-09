@@ -39,6 +39,7 @@ extension UserAgent {
     }
 }
 
+#if swift(>=6.0)
 extension OperatingSystemVersion: @retroactive CustomStringConvertible {
     public var description: String {
         var osVersion = "\(majorVersion).\(minorVersion)"
@@ -48,3 +49,14 @@ extension OperatingSystemVersion: @retroactive CustomStringConvertible {
         return osVersion
     }
 }
+#else
+extension OperatingSystemVersion: CustomStringConvertible {
+    public var description: String {
+        var osVersion = "\(majorVersion).\(minorVersion)"
+        if patchVersion > 0 {
+            osVersion += ".\(patchVersion)"
+        }
+        return osVersion
+    }
+}
+#endif
