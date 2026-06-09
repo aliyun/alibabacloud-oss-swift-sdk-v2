@@ -7,11 +7,7 @@ import Foundation
 #endif
 
 public enum MimeUtils {
-    #if swift(>=5.10)
     public nonisolated(unsafe) static var userMappings: [String: String] = [:]
-    #else
-    public static var userMappings: [String: String] = [:]
-    #endif
 
     static func getExtension(_ fileName: String) -> String? {
         for (index, char) in fileName.enumerated().reversed() {
