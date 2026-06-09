@@ -1,0 +1,36 @@
+name: CI (Linux)
+
+on:
+  push:
+    branches:
+      - master
+      - 'dev-*'
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Swift ${{ matrix.swift }} on Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        swift: ["6.0", "6.1"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Swift ${{ matrix.swift }}
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ matrix.swift }}
+
+      - name: Build
+        run: swift build
+
+      - name: Run unit tests
+        run: swift test --filter AlibabaCloudOSSUnitTests --filter AlibabaCloudOSSExtensionUnitTests

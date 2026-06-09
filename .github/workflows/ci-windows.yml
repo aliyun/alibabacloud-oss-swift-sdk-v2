@@ -1,0 +1,52 @@
+name: CI (Windows)
+
+on:
+  push:
+    branches:
+      - master
+      - 'dev-*'
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Swift ${{ matrix.swift }} on Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        swift: ["6.0.3", "6.1"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Docker daemon
+        run: |
+          $maxAttempts = 30
+          $attempt = 0
+          do {
+            $attempt++
+            if ((Get-Service docker).Status -ne "Running") {
+              Start-Service docker
+            }
+            docker info 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -ge $maxAttempts) {
+              Write-Error "Docker daemon did not become ready after $maxAttempts attempts"
+              exit 1
+            }
+            Start-Sleep -Seconds 6
+          } while ($true)
+        shell: pwsh
+
+      - name: Pull Swift Docker image
+        run: docker pull swift:${{ matrix.swift }}-windowsservercore-ltsc2022
+
+      - name: Build and test
+        run: |
+          $workspace = "C:\" + (Split-Path $env:GITHUB_WORKSPACE -Leaf)
+          docker run -v "${env:GITHUB_WORKSPACE}:${workspace}" -w $workspace swift:${{ matrix.swift }}-windowsservercore-ltsc2022 cmd /s /c "swift --version & swift build & swift test --filter AlibabaCloudOSSUnitTests --filter AlibabaCloudOSSExtensionUnitTests"
+        shell: pwsh
