@@ -160,6 +160,7 @@ final class SignerV1Tests: XCTestCase {
     }
 }
 
+#if swift(>=6.0)
 extension [URLQueryItem]: @retroactive ExpressibleByDictionaryLiteral {
     public typealias Key = String
     public typealias Value = String?
@@ -191,3 +192,36 @@ extension [URLQueryItem]: @retroactive ExpressibleByDictionaryLiteral {
         }
     }
 }
+#else
+extension [URLQueryItem]: ExpressibleByDictionaryLiteral {
+    public typealias Key = String
+    public typealias Value = String?
+
+    public init(dictionaryLiteral elements: (String, String?)...) {
+        self.init()
+        for (name, value) in elements {
+            append(URLQueryItem(name: name, value: value))
+        }
+    }
+
+    public subscript(_ name: String) -> String? {
+        get {
+            if let index = firstIndex(where: { $0.name == name }) {
+                return self[index].value
+            }
+            return nil
+        }
+        set {
+            if let index = firstIndex(where: { $0.name == name }) {
+                if let value = newValue {
+                    self[index] = URLQueryItem(name: name, value: value)
+                } else {
+                    remove(at: index)
+                }
+            } else if let value = newValue {
+                append(URLQueryItem(name: name, value: value))
+            }
+        }
+    }
+}
+#endif
