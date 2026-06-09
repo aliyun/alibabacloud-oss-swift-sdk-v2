@@ -1,0 +1,39 @@
+name: Code Format Check
+
+on:
+  push:
+    branches:
+      - master
+      - 'dev-*'
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.1"
+
+      - name: Run swift format
+        run: swift format -r Sources Tests
+
+      - name: Check for formatting changes
+        run: |
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "Code format check failed. The following files need formatting:"
+            git diff --name-only
+            echo ""
+            echo "Run 'swift format -r Sources Tests' locally to fix."
+            exit 1
+          fi
