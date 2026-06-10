@@ -18,6 +18,7 @@ jobs:
     name: Swift ${{ matrix.swift }} on Linux
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         swift: ["6.0", "6.1"]
 

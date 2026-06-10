@@ -160,18 +160,8 @@ final class SignerV1Tests: XCTestCase {
     }
 }
 
-extension [URLQueryItem]: @retroactive ExpressibleByDictionaryLiteral {
-    public typealias Key = String
-    public typealias Value = String?
-
-    public init(dictionaryLiteral elements: (String, String?)...) {
-        self.init()
-        for (name, value) in elements {
-            append(URLQueryItem(name: name, value: value))
-        }
-    }
-
-    public subscript(_ name: String) -> String? {
+extension [URLQueryItem] {
+    subscript(_ name: String) -> String? {
         get {
             if let index = firstIndex(where: { $0.name == name }) {
                 return self[index].value
