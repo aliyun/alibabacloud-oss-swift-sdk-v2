@@ -1418,6 +1418,63 @@ final class ClientObjectBasicTests: BaseTestCase {
         try await assertNoThrow(await client.deleteObject(deleteReqeust))
     }
 
+    // MARK: - test sealAppendObject
+
+    func testSealAppendObject() async throws {
+        let objectKey = "testAppendFile"
+        let data = "hello oss".data(using: .utf8)!
+
+        let request = AppendObjectRequest(bucket: bucketName,
+                                          key: objectKey,
+                                          position: 0,
+                                          body: .data(data))
+        let result = try await client?.appendObject(request)
+        XCTAssertEqual(result?.statusCode, 200)
+        XCTAssertNotNil(result?.nextAppendPosition)
+        XCTAssertNotNil(result?.hashCrc64ecma)
+
+        let sealResult = try await client?.sealAppendObject(SealAppendObjectRequest(
+            bucket: bucketName,
+            key: objectKey,
+            position: data.count
+        ))
+        XCTAssertEqual(sealResult?.statusCode, 200)
+
+        let deleteReqeust = DeleteObjectRequest(bucket: bucketName, key: objectKey)
+        let _ = try await client?.deleteObject(deleteReqeust)
+    }
+
+    func testSealAppendObjectWithError() async throws {
+        await assertThrowsAsyncError(try await client?.sealAppendObject(SealAppendObjectRequest())) {
+            let error = $0 as? ClientError
+            XCTAssertEqual("Missing required field, request.bucket.", error?.message)
+        }
+
+        await assertThrowsAsyncError(try await client?.sealAppendObject(SealAppendObjectRequest(
+            bucket: bucketName
+        ))) {
+            let error = $0 as? ClientError
+            XCTAssertEqual("Missing required field, request.key.", error?.message)
+        }
+
+        await assertThrowsAsyncError(try await client?.sealAppendObject(SealAppendObjectRequest(
+            bucket: bucketName,
+            key: "key"
+        ))) {
+            let error = $0 as? ClientError
+            XCTAssertEqual("Missing required field, request.position.", error?.message)
+        }
+
+        await assertThrowsAsyncError(try await getInvalidAkClient().sealAppendObject(SealAppendObjectRequest(
+            bucket: bucketName,
+            key: "key",
+            position: 1
+        ))) {
+            let error = $0 as? ServerError
+            XCTAssertEqual(403, error?.statusCode)
+        }
+    }
+
     // MARK: - test DeleteMultipleObjects
 
     func testDeleteMultipleObjects() async throws {
