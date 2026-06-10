@@ -56,6 +56,20 @@ public struct DeletedInfo: Sendable {
     public var deleteMarkerVersionId: Swift.String?
 }
 
+public struct Delete: Sendable {
+    /// Specifies whether to enable the Quiet return mode.
+    /// The DeleteMultipleObjects operation provides the following return modes: Valid value: true,false
+    public var quiet: Swift.Bool?
+
+    /// The container that stores information about you want to delete objects.
+    public var objects: [DeleteObject]?
+
+    public init(quiet: Bool? = nil, objects: [DeleteObject]? = nil) {
+        self.quiet = quiet
+        self.objects = objects
+    }
+}
+
 /// The request for the PutObject operation.
 public struct PutObjectRequest: RequestModel {
     public var commonProp: RequestModelProp
@@ -951,23 +965,17 @@ public struct DeleteMultipleObjectsRequest: RequestModel {
     /// Sees <see cref="Models.EncodingType"/> for supported values.
     public var encodingType: Swift.String?
 
-    /// Specifies whether to enable the Quiet return mode.
-    /// The DeleteMultipleObjects operation provides the following return modes: Valid value: true,false
-    public var quiet: Swift.Bool?
-
-    /// The container that stores information about you want to delete objects.
-    public var objects: [DeleteObject]?
+    /// The delete object containing quiet mode and object identifiers.
+    public var delete: Delete?
 
     public init(bucket: String? = nil,
-                objects: [DeleteObject]? = nil,
-                quiet: Bool? = nil,
+                delete: Delete? = nil,
                 encodingType: String? = nil,
                 commonProp: RequestModelProp? = nil)
     {
         self.bucket = bucket
         self.encodingType = encodingType
-        self.quiet = quiet
-        self.objects = objects
+        self.delete = delete
         self.commonProp = commonProp ?? RequestModelProp()
     }
 }

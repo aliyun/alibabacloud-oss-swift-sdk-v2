@@ -402,10 +402,10 @@ extension Serde {
 
         var xmlBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         xmlBody.append("<Delete>")
-        if let quiet = request.quiet {
+        if let quiet = request.delete?.quiet {
             xmlBody.append("<Quiet>\(quiet)</Quiet>")
         }
-        if let objects = request.objects {
+        if let objects = request.delete?.objects {
             for object in objects {
                 if let key = object.key {
                     xmlBody.append("<Object><Key>\(key.escape())</Key>")
