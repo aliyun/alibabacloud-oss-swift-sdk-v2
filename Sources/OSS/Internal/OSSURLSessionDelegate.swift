@@ -57,13 +57,7 @@ extension OSSURLSessionDelegate: URLSessionTaskDelegate {
 
             SecTrustSetPolicies(serverTrust, policies as CFTypeRef)
 
-            var result = SecTrustResultType.invalid
-            SecTrustEvaluate(serverTrust, &result)
-
-            //        var error: CFError?
-            //        let a = SecTrustEvaluateWithError(serverTrust, &error)
-
-            return result == SecTrustResultType.unspecified || result == SecTrustResultType.proceed
+            return SecTrustEvaluateWithError(serverTrust, nil)
         }
     #endif
 }
