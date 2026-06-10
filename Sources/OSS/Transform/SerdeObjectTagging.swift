@@ -20,8 +20,8 @@ extension Serde {
                    let value = tag.value
                 {
                     xmlBody.append("<Tag>")
-                    xmlBody.append("<Key>\(key)</Key>")
-                    xmlBody.append("<Value>\(value)</Value>")
+                    xmlBody.append("<Key>\(key.escape())</Key>")
+                    xmlBody.append("<Value>\(value.escape())</Value>")
                     xmlBody.append("</Tag>")
                 }
             }

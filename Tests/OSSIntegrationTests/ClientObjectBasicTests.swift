@@ -1645,6 +1645,37 @@ final class ClientObjectBasicTests: BaseTestCase {
         }
     }
 
+    func testDeleteMultipleObjectsWithSpecialCharacters() async throws {
+        let specialKeys = [
+            "key&1<2>3\"4'5",
+            "key\ttab",
+            "key\nnewline",
+        ]
+
+        for key in specialKeys {
+            let putRequest = PutObjectRequest(
+                bucket: bucketName,
+                key: key,
+                body: .data("hello oss".data(using: .utf8)!)
+            )
+            try await assertNoThrow(await client?.putObject(putRequest))
+        }
+
+        let objects = specialKeys.map { DeleteObject(key: $0) }
+        let request = DeleteMultipleObjectsRequest(
+            bucket: bucketName,
+            delete: Delete(
+                objects: objects
+            )
+        )
+        let result = try await client?.deleteMultipleObjects(request)
+        XCTAssertEqual(result?.statusCode, 200)
+        XCTAssertNotNil(result?.deletedObjects)
+        for key in specialKeys {
+            XCTAssertTrue(result!.deletedObjects!.contains(where: { $0.key == key }))
+        }
+    }
+
     func testDeleteMultiplePartialObjects() async throws {
         let objectKey = "testDeleteObjectsFile"
         var objects: [DeleteObject] = []

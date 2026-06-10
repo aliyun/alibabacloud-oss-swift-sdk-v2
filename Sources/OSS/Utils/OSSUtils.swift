@@ -61,28 +61,56 @@ public extension String {
     }
 
     func escape() -> String {
-        var escapeString = ""
-        for char in self {
-            switch char {
+        var result = ""
+        for scalar in unicodeScalars {
+            switch scalar {
             case "&":
-                escapeString.append("&amp;")
+                result.append("&amp;")
             case "<":
-                escapeString.append("&lt;")
+                result.append("&lt;")
             case ">":
-                escapeString.append("&gt;")
+                result.append("&gt;")
             case "\"":
-                escapeString.append("&quot;")
-            case "\'":
-                escapeString.append("&apos;")
+                result.append("&quot;")
+            case "'":
+                result.append("&apos;")
+            case "\t":
+                result.append("&#x9;")
+            case "\n":
+                result.append("&#xA;")
+            case "\r":
+                result.append("&#xD;")
             default:
-                escapeString.append(char)
+                if scalar.isXmlValid {
+                    result.append(Character(scalar))
+                } else if scalar.value < 0x20 {
+                    result.append("&#x")
+                    result.append(String(scalar.value, radix: 16, uppercase: true))
+                    result.append(";")
+                } else {
+                    result.append("\u{FFFD}")
+                }
             }
         }
-        return escapeString
+        return result
     }
 
     func trim() -> String {
         return trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+    }
+}
+
+extension Unicode.Scalar {
+    var isXmlValid: Bool {
+        switch value {
+        case 0x9, 0xA, 0xD,
+             0x20...0xD7FF,
+             0xE000...0xFFFD,
+             0x10000...0x10FFFF:
+            return true
+        default:
+            return false
+        }
     }
 }
 
