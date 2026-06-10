@@ -451,6 +451,46 @@ class SerdeObjectBasicTests: XCTestCase {
         XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
     }
 
+    func testSerializeDeleteMultipleObjectsWithControlCharacters() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            objects: [DeleteObject(key: "key\t\n\r")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Object>\
+            <Key>key&#x9;&#xA;&#xD;</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithInvalidXmlCharacters() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            objects: [DeleteObject(key: "key\u{01}\u{08}")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Object>\
+            <Key>key&#x1;&#x8;</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
     func testDeserializeDeleteMultipleObjects() {
         // body is null
         var output = OperationOutput(statusCode: 200,
