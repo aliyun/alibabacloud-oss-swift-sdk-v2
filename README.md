@@ -13,7 +13,7 @@ alibabacloud-oss-swift-sdk-v2 is the Developer Preview for the v2 of the OSS SDK
 > - With this SDK, you can upload, download and manage data on any app anytime and anywhere conveniently.
 
 ## Running Environment
- - Applicable to`Swift 5.9`or above
+ - Applicable to`Swift 5.10`or above
  - Platform: iOS, macOS, visionOS, watchOS, tvOS, Linux, Windows
  
 ## Installing

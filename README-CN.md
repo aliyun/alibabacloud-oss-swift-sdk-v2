@@ -13,7 +13,7 @@ alibabacloud-oss-swift-sdk-v2 是OSS在swift编译语言下的第二版SDK
 > - 使用此SDK，用户可以方便地在任何应用、任何时间、任何地点上传，下载和管理数据。
 
 ## 运行环境
- - 适用于`Swift 5.9`及以上版本
+ - 适用于`Swift 5.10`及以上版本
  - 支持平台: iOS, macOS, visionOS, watchOS, tvOS, Linux, Windows
  
 ## 安装方法
