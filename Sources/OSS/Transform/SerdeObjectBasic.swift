@@ -494,3 +494,21 @@ extension Serde {
         _: inout OperationOutput
     ) throws {}
 }
+
+// MARK: - SealAppendObject
+
+extension Serde {
+    static func serializeSealAppendObject(
+        _ request: inout SealAppendObjectRequest,
+        _ input: inout OperationInput
+    ) throws {
+        if let value = request.position {
+            input.parameters["position"] = "\(value)"
+        }
+    }
+
+    static func deserializeSealAppendObject(
+        _: inout SealAppendObjectResult,
+        _: inout OperationOutput
+    ) throws {}
+}

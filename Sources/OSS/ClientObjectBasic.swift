@@ -368,4 +368,35 @@ public extension Client {
 
         return result
     }
+
+    func sealAppendObject(
+        _ request: SealAppendObjectRequest,
+        _ options: OperationOptions? = nil
+    ) async throws -> SealAppendObjectResult {
+        var input = OperationInput(
+            operationName: "SealAppendObject",
+            method: "POST",
+            headers: [
+                "Content-Type": "application/xml",
+            ],
+            parameters: [
+                "seal": "",
+            ]
+        )
+        input.bucket = try request.bucket.ensureRequired(field: "request.bucket")
+        input.key = try request.key.ensureRequired(field: "request.key")
+        _ = try request.position.ensureRequired(field: "request.position")
+
+        var req = request
+
+        try Serde.serializeInput(&req, &input, [Serde.serializeSealAppendObject])
+
+        var output = try await clientImpl.execute(with: &input, args: options)
+
+        var result = SealAppendObjectResult()
+
+        try Serde.deserializeOutput(&result, &output, [Serde.deserializeSealAppendObject])
+
+        return result
+    }
 }

@@ -1017,3 +1017,36 @@ public struct CleanRestoredObjectRequest: RequestModel {
 public struct CleanRestoredObjectResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 }
+
+public struct SealAppendObjectRequest: RequestModel {
+    public var commonProp: RequestModelProp
+
+    /// The name of the bucket
+    public var bucket: Swift.String?
+
+    /// The name of the object.
+    public var key: Swift.String?
+
+    /// Specifies the expected length of the object when you call the SealAppendObject operation.
+    /// OSS checks whether this length matches the actual length of the object. If the lengths do not match, the request fails and the PositionNotEqualToLength error is returned.
+    public var position: Swift.Int?
+
+    public init(
+        bucket: String? = nil,
+        key: String? = nil,
+        position: Int? = nil,
+        commonProp: RequestModelProp? = nil
+    ) {
+        self.bucket = bucket
+        self.key = key
+        self.position = position
+        self.commonProp = commonProp ?? RequestModelProp()
+    }
+}
+
+public struct SealAppendObjectResult: ResultModel {
+    public var commonProp: ResultModelProp = .init()
+
+    /// The time in GMT format when the SealAppendObject operation was first performed on the object. This timestamp does not change even if the operation is performed again.
+    public var sealedTime: String? { return commonProp.headers?[caseInsensitive: "x-oss-sealed-time"] }
+}
