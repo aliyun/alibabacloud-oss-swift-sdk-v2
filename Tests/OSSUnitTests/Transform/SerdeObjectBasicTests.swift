@@ -303,9 +303,11 @@ class SerdeObjectBasicTests: XCTestCase {
         // normal
         request = DeleteMultipleObjectsRequest()
         request.encodingType = "url"
-        request.quiet = true
-        request.objects = [DeleteObject(key: "key1", versionId: "versionId1"),
-                           DeleteObject(key: "key2", versionId: "versionId2")]
+        request.delete = Delete(
+            quiet: true,
+            objects: [DeleteObject(key: "key1", versionId: "versionId1"),
+                      DeleteObject(key: "key2", versionId: "versionId2")]
+        )
         try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
         XCTAssertNotNil(input.headers["Encoding-Type"])
 
@@ -322,6 +324,128 @@ class SerdeObjectBasicTests: XCTestCase {
             <Key>key2</Key>\
             <VersionId>versionId2</VersionId>\
             </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithQuietFalse() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            quiet: false,
+            objects: [DeleteObject(key: "key1")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Quiet>false</Quiet>\
+            <Object>\
+            <Key>key1</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithQuietNil() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            objects: [DeleteObject(key: "key1")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Object>\
+            <Key>key1</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithoutVersionId() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            quiet: true,
+            objects: [DeleteObject(key: "key1"),
+                      DeleteObject(key: "key2")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Quiet>true</Quiet>\
+            <Object>\
+            <Key>key1</Key>\
+            </Object>\
+            <Object>\
+            <Key>key2</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithSpecialCharacters() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            objects: [DeleteObject(key: "key&1<2>3\"4'5")]
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Object>\
+            <Key>key&amp;1&lt;2&gt;3&quot;4&apos;5</Key>\
+            </Object>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithEmptyObjects() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = Delete(
+            quiet: true,
+            objects: []
+        )
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
+            <Quiet>true</Quiet>\
+            </Delete>
+            """
+        XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())
+    }
+
+    func testSerializeDeleteMultipleObjectsWithDeleteNil() throws {
+        var input = OperationInput()
+        var request = DeleteMultipleObjectsRequest()
+        request.delete = nil
+        try Serde.serializeInput(&request, &input, [Serde.serializeDeleteMultipleObjects])
+
+        let xml =
+            """
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+            <Delete>\
             </Delete>
             """
         XCTAssertEqual(xml.data(using: .utf8)?.base64EncodedString(), try input.body?.readData()?.base64EncodedString())

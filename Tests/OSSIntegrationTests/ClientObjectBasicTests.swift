@@ -1441,7 +1441,12 @@ final class ClientObjectBasicTests: BaseTestCase {
             }
         }
 
-        let request = await DeleteMultipleObjectsRequest(bucket: bucketName, objects: objects.elements)
+        let request = await DeleteMultipleObjectsRequest(
+            bucket: bucketName,
+            delete: Delete(
+                objects: objects.elements
+            )
+        )
         let result = try await client.deleteMultipleObjects(request)
         XCTAssertEqual(result.statusCode, 200)
         XCTAssertNotNil(result.deletedObjects)
@@ -1481,8 +1486,13 @@ final class ClientObjectBasicTests: BaseTestCase {
                 }
             }
 
-            var request = await DeleteMultipleObjectsRequest(bucket: bucketName, objects: objects.elements)
-            request.quiet = true
+            let request = await DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    quiet: true,
+                    objects: objects.elements
+                )
+            )
             let result = try await client.deleteMultipleObjects(request)
             XCTAssertEqual(result.statusCode, 200)
             XCTAssertNil(result.deletedObjects)
@@ -1512,8 +1522,13 @@ final class ClientObjectBasicTests: BaseTestCase {
                 }
             }
 
-            var request = await DeleteMultipleObjectsRequest(bucket: bucketName, objects: objects.elements)
-            request.quiet = false
+            let request = await DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    quiet: false,
+                    objects: objects.elements
+                )
+            )
             let result = try await client.deleteMultipleObjects(request)
             XCTAssertEqual(result.statusCode, 200)
             XCTAssertNotNil(result.deletedObjects)
@@ -1548,8 +1563,13 @@ final class ClientObjectBasicTests: BaseTestCase {
                 }
             }
 
-            var request = await DeleteMultipleObjectsRequest(bucket: bucketName, objects: objects.elements)
-            request.quiet = false
+            let request = await DeleteMultipleObjectsRequest(
+                bucket: bucketName,
+                delete: Delete(
+                    quiet: false,
+                    objects: objects.elements
+                )
+            )
             let result = try await client.deleteMultipleObjects(request)
             XCTAssertEqual(result.statusCode, 200)
             XCTAssertNotNil(result.deletedObjects)
@@ -1596,7 +1616,12 @@ final class ClientObjectBasicTests: BaseTestCase {
         objects.append(contentsOf: existedFile)
         objects.append(contentsOf: noExistedFile)
 
-        let request = DeleteMultipleObjectsRequest(bucket: bucketName, objects: objects)
+        let request = DeleteMultipleObjectsRequest(
+            bucket: bucketName,
+            delete: Delete(
+                objects: objects
+            )
+        )
         let result = try await client?.deleteMultipleObjects(request)
         XCTAssertEqual(result?.statusCode, 200)
         XCTAssertNotNil(result?.deletedObjects)
@@ -1648,8 +1673,12 @@ final class ClientObjectBasicTests: BaseTestCase {
             objects.append(deleteObject)
         }
 
-        let request = DeleteMultipleObjectsRequest(bucket: bucketName,
-                                                   objects: objects)
+        let request = DeleteMultipleObjectsRequest(
+            bucket: bucketName,
+            delete: Delete(
+                objects: objects
+            )
+        )
         let result = try await client?.deleteMultipleObjects(request)
         XCTAssertEqual(result?.statusCode, 200)
         XCTAssertNotNil(result?.deletedObjects)
