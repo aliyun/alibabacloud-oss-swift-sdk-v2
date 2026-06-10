@@ -30,7 +30,7 @@ extension UserAgent {
         let sdkVersion = SdkInfo.version()
 
         let systemName = getSystemName()
-        let systemVersion = ProcessInfo.processInfo.operatingSystemVersion.description
+        let systemVersion = ProcessInfo.processInfo.operatingSystemVersion.versionString
         let localeIdentifier = Locale.current.identifier
 
         let info = "\(systemName)/\(systemVersion)/\(localeIdentifier)"
@@ -39,8 +39,8 @@ extension UserAgent {
     }
 }
 
-extension OperatingSystemVersion: @retroactive CustomStringConvertible {
-    public var description: String {
+extension OperatingSystemVersion {
+    var versionString: String {
         var osVersion = "\(majorVersion).\(minorVersion)"
         if patchVersion > 0 {
             osVersion += ".\(patchVersion)"
