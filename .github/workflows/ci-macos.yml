@@ -15,26 +15,61 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Xcode ${{ matrix.xcode }} on macOS
+    name: ${{ matrix.os }}, ${{ matrix.xcode }}, Swift ${{ matrix.swift }}
     runs-on: ${{ matrix.os }}
+    env:
+      DEVELOPER_DIR: "/Applications/${{ matrix.xcode }}.app/Contents/Developer"
     strategy:
       fail-fast: false
       matrix:
         include:
-          - xcode: "15.4"
+          - swift: "latest"
+            os: macos-latest
+            xcode: "Xcode"
+          - swift: "6.3.0"
+            os: macos-26
+            xcode: "Xcode_26.4"
+          - swift: "6.2.4"
+            os: macos-26
+            xcode: "Xcode_26.3"
+          - swift: "6.2.3"
+            os: macos-26
+            xcode: "Xcode_26.2"
+          - swift: "6.2.1"
+            os: macos-26
+            xcode: "Xcode_26.1"
+          - swift: "6.2.0"
+            os: macos-26
+            xcode: "Xcode_26.0"
+          - swift: "6.1.2"
+            os: macos-15
+            xcode: "Xcode_16.4"
+          - swift: "6.1.0"
+            os: macos-15
+            xcode: "Xcode_16.3"
+          - swift: "6.0.3"
+            os: macos-15
+            xcode: "Xcode_16.2"
+          - swift: "6.0.2"
+            os: macos-15
+            xcode: "Xcode_16.1"
+          - swift: "6.0"
+            os: macos-15
+            xcode: "Xcode_16.0"
+          - swift: "5.10"
             os: macos-14
-          - xcode: "16.2"
-            os: macos-latest
-          - xcode: "16.3"
-            os: macos-latest
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer
+            xcode: "Xcode_15.4"
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
       - name: Swift version
-        run: swift --version
+        run: |
+          echo "Selected Xcode:"
+          xcode-select -p
+          echo "Swift version:"
+          swift --version
 
       - name: Build
         run: swift build
