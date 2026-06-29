@@ -1,5 +1,13 @@
 # ChangeLog - Alibaba Cloud OSS SDK for Swift
 
+## 版本号：0.3.0 日期：2026-06-29
+### 变更内容
+- Feature：Add api SealAppendObject
+- Update：Enhance xml escape
+- Update：Modify DeleteMultipleObjects
+- Update：Using the new SecTrustEvaluateWithError method
+- Update：Update minimum swift version to 5.10
+
 ## 版本号：0.2.0 日期：2025-09-12
 ### 变更内容
 - Feature：add `useProxyInNetWork` configuration

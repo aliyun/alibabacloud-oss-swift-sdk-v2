@@ -21,7 +21,7 @@ alibabacloud-oss-swift-sdk-v2 is the v2 of the OSS SDK for the Swift programming
 This SDK uses the Swift Package Manager to manage its code dependencies. To use it in your codebase, add a dependency to the package in your own Package.swift dependencies.
 ```swift
 dependencies: [
-    .package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.2.0")
+    .package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.3.0")
 ]
 ```
 Then add target dependencies you want to use.

@@ -31,7 +31,7 @@ swift --version
 ### Use Swift Package Manager
 Add the following dependencies to the Package.swift file:
 ```swift
-.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.2.0")
+.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.3.0")
 ```
 
 ### Use Swift Package Manager in XCode

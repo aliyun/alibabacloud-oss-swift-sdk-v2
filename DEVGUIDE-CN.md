@@ -31,7 +31,7 @@ swift --version
 ### Swift Package Manager 方式
 在 Package.swift 文件中添加以下依赖。
 ```swift
-.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.2.0")
+.package(url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git", from: "0.3.0")
 ```
 
 ### 在Xcode中通过 Swift Package Manager 安装
