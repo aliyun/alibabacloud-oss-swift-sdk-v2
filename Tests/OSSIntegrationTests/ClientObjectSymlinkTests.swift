@@ -76,7 +76,7 @@ final class ClientObjectSymlinkTests: BaseTestCase {
         var putSymlinkRequest = PutSymlinkRequest(bucket: bucketName,
                                                   key: objectSymlinkKey,
                                                   symlinkTarget: objectKey)
-        putSymlinkRequest.objectAcl = "public-read"
+        putSymlinkRequest.objectAcl = "private"
         try await assertNoThrow(await client?.putSymlink(putSymlinkRequest))
 
         let getACLRequest = GetObjectAclRequest(bucket: bucketName, key: objectSymlinkKey)

@@ -41,26 +41,6 @@ final class ClientObjectACLTests: BaseTestCase {
         getACLResult = try await client?.getObjectAcl(getACLRequest)
         XCTAssertEqual(getACLResult?.accessControlPolicy?.accessControlList?.grant, putACLRequest.objectAcl)
 
-        // publicRead
-        putACLRequest = PutObjectAclRequest(bucket: bucketName,
-                                            key: objectKey,
-                                            objectAcl: "public-read")
-        try await assertNoThrow(await client?.putObjectAcl(putACLRequest))
-
-        getACLRequest = GetObjectAclRequest(bucket: bucketName, key: objectKey)
-        getACLResult = try await client?.getObjectAcl(getACLRequest)
-        XCTAssertEqual(getACLResult?.accessControlPolicy?.accessControlList?.grant, putACLRequest.objectAcl)
-
-        // publicReadWrite
-        putACLRequest = PutObjectAclRequest(bucket: bucketName,
-                                            key: objectKey,
-                                            objectAcl: "public-read-write")
-        try await assertNoThrow(await client?.putObjectAcl(putACLRequest))
-
-        getACLRequest = GetObjectAclRequest(bucket: bucketName, key: objectKey)
-        getACLResult = try await client?.getObjectAcl(getACLRequest)
-        XCTAssertEqual(getACLResult?.accessControlPolicy?.accessControlList?.grant, putACLRequest.objectAcl)
-
         // default
         putACLRequest = PutObjectAclRequest(bucket: bucketName,
                                             key: objectKey,

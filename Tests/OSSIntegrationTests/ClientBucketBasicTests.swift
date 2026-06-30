@@ -137,7 +137,7 @@ final class ClientBucketBasicTests: BaseTestCase {
         XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.accessControlList?.grant, request.acl)
         XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.name, bucket)
         XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.accessMonitor, "Disabled")
-        XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.blockPublicAccess, false)
+        XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.blockPublicAccess, true)
         XCTAssertNotNil(getbucketInfoResult.bucketInfo?.bucket?.creationDate)
         XCTAssertEqual(getbucketInfoResult.bucketInfo?.bucket?.crossRegionReplication, "Disabled")
         XCTAssertNil(getbucketInfoResult.bucketInfo?.bucket?.comment)

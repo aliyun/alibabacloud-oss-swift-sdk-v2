@@ -18,9 +18,9 @@ public class BaseTestCase: XCTestCase {
     private var _client: Client? = nil
     private var _invalidClient: Client? = nil
 
-    let bucketNamePrefix = "swift-sdk-test-bucket-"
-    let objectNamePrefix = "swift-sdk-test-object-"
-    let fileNamePrefix = "swift-sdk-test-file-"
+    let bucketNamePrefix = "oss-sdk-test-swift-bucket-"
+    let objectNamePrefix = "oss-sdk-test-swift-object-"
+    let fileNamePrefix = "oss-sdk-test-swift-file-"
 
     let tempDir = NSTemporaryDirectory() + "swift-sdk-test_" + NSUUID().uuidString
     #if os(Windows)
@@ -88,7 +88,7 @@ public class BaseTestCase: XCTestCase {
     }
 
 
-    var bucketName = "object-extension-test-\(Int(Date().timeIntervalSince1970))"
+    var bucketName = "oss-sdk-test-swift-bucket-\(Int(Date().timeIntervalSince1970))"
 
     var client: Client?
 
@@ -219,7 +219,7 @@ public class BaseTestCase: XCTestCase {
                 objects.append(object)
             }
             let deleteRequest = DeleteMultipleObjectsRequest(
-                bucket: bucketName,
+                bucket: bucket,
                 delete: Delete(
                     objects: objects
                 )
@@ -233,7 +233,7 @@ public class BaseTestCase: XCTestCase {
                 objects.append(object)
             }
             let deleteRequest = DeleteMultipleObjectsRequest(
-                bucket: bucketName,
+                bucket: bucket,
                 delete: Delete(
                     objects: objects
                 )
@@ -252,7 +252,7 @@ public class BaseTestCase: XCTestCase {
                 objects.append(object)
             }
             let deleteRequest = DeleteMultipleObjectsRequest(
-                bucket: bucketName,
+                bucket: bucket,
                 delete: Delete(
                     objects: objects
                 )
