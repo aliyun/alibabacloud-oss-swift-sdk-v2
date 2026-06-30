@@ -22,7 +22,7 @@ final class ClientBucketAclTests: BaseTestCase {
 
         // put bucket acl
         var putBucketAclRequest = PutBucketAclRequest(bucket: bucket)
-        putBucketAclRequest.acl = "public-read-write"
+        putBucketAclRequest.acl = "private"
         let putBucketAclResult = try await client.putBucketAcl(putBucketAclRequest)
         XCTAssertEqual(putBucketAclResult.statusCode, 200)
         XCTAssertEqual(24, putBucketAclResult.requestId.count)
@@ -32,7 +32,7 @@ final class ClientBucketAclTests: BaseTestCase {
         XCTAssertNotNil(getBucketAclResult)
         XCTAssertEqual(getBucketAclResult.statusCode, 200)
         XCTAssertEqual(24, getBucketAclResult.requestId.count)
-        XCTAssertEqual("public-read-write", getBucketAclResult.accessControlPolicy?.accessControlList?.grant)
+        XCTAssertEqual("private", getBucketAclResult.accessControlPolicy?.accessControlList?.grant)
 
         // delete bucket
         let _ = try await client.deleteBucket(DeleteBucketRequest(bucket: bucket))
