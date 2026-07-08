@@ -30,11 +30,21 @@ open class Utils {
             var md5 = Insecure.MD5()
             var done = false
             while !done {
+#if canImport(Darwin)
+                autoreleasepool {
+                    let data = fileHandle.readData(ofLength: chunkSize)
+                    if data.count == 0 {
+                        done = true
+                    }
+                    md5.update(data: data)
+                }
+#else
                 let data = fileHandle.readData(ofLength: chunkSize)
                 if data.count == 0 {
                     done = true
                 }
                 md5.update(data: data)
+#endif
             }
 
             return Data(md5.finalize())

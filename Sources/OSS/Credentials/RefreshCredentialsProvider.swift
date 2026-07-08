@@ -26,9 +26,6 @@ public final class RefreshCredentialsProvider: CredentialsProvider {
     static func getCredentialAndExpiration(provider: CredentialsProvider) async throws -> (Credentials, Date) {
         try Task.checkCancellation()
         let cred = try await provider.getCredentials()
-        if cred.expiration == nil {
-            return (cred, Date.distantFuture)
-        }
-        return (cred, cred.expiration!)
+        return (cred, cred.expiration ?? Date.distantFuture)
     }
 }

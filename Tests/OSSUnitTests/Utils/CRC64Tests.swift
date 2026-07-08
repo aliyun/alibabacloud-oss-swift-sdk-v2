@@ -11,38 +11,38 @@ class CRC64Tests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    // func testCRC64() throws {
-    //     let data1 = "This is a case of test "
-    //     let data2 = "for compute crc."
-    //     let data = data1.appending(data2)
+    func testCRC64() throws {
+        let data1 = "This is a case of test "
+        let data2 = "for compute crc."
+        let data = data1.appending(data2)
 
-    //     var crc: UInt64 = 0
-    //     crc = data.data(using: .utf8)!.withUnsafeBytes {
-    //         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
-    //     }
-    //     XCTAssertEqual(crc, 7_500_711_509_069_051_972)
+        var crc: UInt64 = 0
+        crc = data.data(using: .utf8)!.withUnsafeBytes {
+         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
+        }
+        XCTAssertEqual(crc, 7_500_711_509_069_051_972)
 
-    //     crc = 0
-    //     crc = data1.data(using: .utf8)!.withUnsafeBytes {
-    //         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
-    //     }
-    //     crc = data2.data(using: .utf8)!.withUnsafeBytes {
-    //         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
-    //     }
-    //     XCTAssertEqual(crc, 7_500_711_509_069_051_972)
+        crc = 0
+        crc = data1.data(using: .utf8)!.withUnsafeBytes {
+         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
+        }
+        crc = data2.data(using: .utf8)!.withUnsafeBytes {
+         CRC64.default.crc64(crc: crc, buf: $0.baseAddress!, len: $0.count)
+        }
+        XCTAssertEqual(crc, 7_500_711_509_069_051_972)
 
-    //     var crcCombine: UInt64 = 0
-    //     let crc1 = data1.data(using: .utf8)!.withUnsafeBytes {
-    //         CRC64.default.crc64(crc: 0, buf: $0.baseAddress!, len: $0.count)
-    //     }
-    //     crcCombine = CRC64.default.crc64Combine(crc1: crcCombine, crc2: crc1, len2: uintmax_t(data1.count))
-    //     let crc2 = data2.data(using: .utf8)!.withUnsafeBytes {
-    //         CRC64.default.crc64(crc: 0, buf: $0.baseAddress!, len: $0.count)
-    //     }
-    //     crcCombine = CRC64.default.crc64Combine(crc1: crcCombine, crc2: crc2, len2: uintmax_t(data2.count))
+        var crcCombine: UInt64 = 0
+        let crc1 = data1.data(using: .utf8)!.withUnsafeBytes {
+         CRC64.default.crc64(crc: 0, buf: $0.baseAddress!, len: $0.count)
+        }
+        crcCombine = CRC64.default.crc64Combine(crc1: crcCombine, crc2: crc1, len2: uintmax_t(data1.count))
+        let crc2 = data2.data(using: .utf8)!.withUnsafeBytes {
+         CRC64.default.crc64(crc: 0, buf: $0.baseAddress!, len: $0.count)
+        }
+        crcCombine = CRC64.default.crc64Combine(crc1: crcCombine, crc2: crc2, len2: uintmax_t(data2.count))
 
-    //     XCTAssertEqual(crc, crcCombine)
-    // }
+        XCTAssertEqual(crc, crcCombine)
+    }
 
     #if !os(Linux) && !os(Windows)
 //    func testCheckCRCInputStream() throws {

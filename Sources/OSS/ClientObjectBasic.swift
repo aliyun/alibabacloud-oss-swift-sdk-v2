@@ -98,7 +98,8 @@ public extension Client {
                 value: ProgressDelegateDesc(delegate: ProgressWithRetry(progress), upload: false)
             )
         }
-        if clientImpl.hasFeatureFlag(FeatureFlag.enableCRC64CheckUpload) {
+        if clientImpl.hasFeatureFlag(FeatureFlag.enableCRC64CheckUpload),
+           request.range == nil {
             input.metadata.append(
                 key: AttributeKeys.responseHandler,
                 value: ChekerDownloadCrcResponseHandler()
