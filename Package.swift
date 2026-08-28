@@ -17,7 +17,8 @@ let package = Package(
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(name: "AlibabaCloudOSS", targets: ["AlibabaCloudOSS"]),
-        .library(name: "AlibabaCloudOSSExtension", targets: ["AlibabaCloudOSSExtension"])
+        .library(name: "AlibabaCloudOSSExtension", targets: ["AlibabaCloudOSSExtension"]),
+        .library(name: "AlibabaCloudOSSAgentic", targets: ["AlibabaCloudOSSAgentic"])
     ],
     dependencies: [
          .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
@@ -43,6 +44,15 @@ let package = Package(
                 .product(name: "XMLCoder", package: "XMLCoder")
             ],
             path: "Sources/OSSExtension",
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "AlibabaCloudOSSAgentic",
+            dependencies: [
+                "AlibabaCloudOSS",
+                .product(name: "Crypto", package: "swift-crypto")
+            ],
+            path: "Sources/OSSAgentic",
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -78,6 +88,23 @@ let package = Package(
             ],
             path: "Tests/OSSExtensionIntegrationTests",
             resources: []
+        ),
+        .testTarget(
+            name: "AlibabaCloudOSSAgenticUnitTests",
+            dependencies: [
+                "AlibabaCloudOSS",
+                "AlibabaCloudOSSAgentic",
+                .product(name: "Atomics", package: "swift-atomics")
+            ],
+            path: "Tests/OSSAgenticUnitTests"
+        ),
+        .testTarget(
+            name: "AlibabaCloudOSSAgenticIntegrationTests",
+            dependencies: [
+                "AlibabaCloudOSS",
+                "AlibabaCloudOSSAgentic",
+            ],
+            path: "Tests/OSSAgenticIntegrationTests"
         )
     ]
 )

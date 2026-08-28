@@ -119,8 +119,8 @@ public struct InitiateBucketWormRequest : RequestModel {
 public struct InitiateBucketWormResult : ResultModel {
     public var commonProp: ResultModelProp = ResultModelProp()
  
-    /// <no value>
-    public var wormId: Swift.String? { get { return self.commonProp.headers?["x-oss-worm-id"] } } 
+    /// The ID of the retention policy.
+    public var wormId: Swift.String? { get { return self.commonProp.headers?["x-oss-worm-id"] } }
      
 }
 

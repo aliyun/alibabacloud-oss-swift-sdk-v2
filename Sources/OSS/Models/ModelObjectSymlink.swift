@@ -56,7 +56,7 @@ public struct PutSymlinkRequest: RequestModel {
 public struct PutSymlinkResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 }
 
@@ -90,9 +90,9 @@ public struct GetSymlinkRequest: RequestModel {
 public struct GetSymlinkResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The target object that the symbolic link points to.
     public var symlinkTarget: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-symlink-target"] }
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 }

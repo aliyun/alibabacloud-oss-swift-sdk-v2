@@ -36,7 +36,7 @@ public struct PutObjectAclRequest: RequestModel {
 public struct PutObjectAclResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 }
 

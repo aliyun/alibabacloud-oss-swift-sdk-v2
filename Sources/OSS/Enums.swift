@@ -27,6 +27,7 @@ public enum AddressStyleType {
     case virtualHosted
     case cname
     case path
+    case virtualHostedAlias
 }
 
 public enum HttpProtocal: String {

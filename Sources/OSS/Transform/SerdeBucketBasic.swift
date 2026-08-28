@@ -60,17 +60,25 @@ extension Serde {
             input.headers["x-oss-bucket-tagging"] = value
         }
 
-        var xmlBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        xmlBody.append("<CreateBucketConfiguration>")
-        if let storageClass = request.createBucketConfiguration?.storageClass {
-            xmlBody.append("<StorageClass>\(storageClass)</StorageClass>")
+        if let value = request.agenticBucket {
+            input.headers["x-oss-agentic-bucket"] = value
         }
-        if let dataRedundancyType = request.createBucketConfiguration?.dataRedundancyType {
-            xmlBody.append("<DataRedundancyType>\(dataRedundancyType)</DataRedundancyType>")
-        }
-        xmlBody.append("</CreateBucketConfiguration>")
 
-        input.body = .data(xmlBody.data(using: .utf8)!)
+        // Omit the body when no configuration is provided: agentic bucket space
+        // creation rejects a request that carries one.
+        if let configuration = request.createBucketConfiguration {
+            var xmlBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            xmlBody.append("<CreateBucketConfiguration>")
+            if let storageClass = configuration.storageClass {
+                xmlBody.append("<StorageClass>\(storageClass)</StorageClass>")
+            }
+            if let dataRedundancyType = configuration.dataRedundancyType {
+                xmlBody.append("<DataRedundancyType>\(dataRedundancyType)</DataRedundancyType>")
+            }
+            xmlBody.append("</CreateBucketConfiguration>")
+
+            input.body = .data(xmlBody.data(using: .utf8)!)
+        }
     }
 
     static func deserializePutBucket(
@@ -389,6 +397,8 @@ extension Serde {
 
         bucket.comment = bucketContent?["Comment"] as? String
         bucket.creationDate = (bucketContent?["CreationDate"] as? String)?.toDate()
+        bucket.bucketResourceType = bucketContent?["BucketResourceType"] as? String
+        bucket.agenticBucketName = bucketContent?["AgenticBucketName"] as? String
         bucket.blockPublicAccess = (bucketContent?["BlockPublicAccess"] as? String)?.toBool()
         if let accessControlList = bucketContent?["AccessControlList"] as? [String: String] {
             bucket.accessControlList = AccessControlList(grant: accessControlList["Grant"])

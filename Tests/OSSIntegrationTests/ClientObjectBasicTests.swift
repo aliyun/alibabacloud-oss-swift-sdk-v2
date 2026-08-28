@@ -182,7 +182,7 @@ final class ClientObjectBasicTests: BaseTestCase {
 
     func testPutObjectAcl() async throws {
         let objectKey = randomObjectName()
-        let acl = "public-read"
+        let acl = "private"
         var request = PutObjectRequest(bucket: bucketName,
                                        key: objectKey)
         request.objectAcl = acl
@@ -938,7 +938,7 @@ final class ClientObjectBasicTests: BaseTestCase {
         let data = "hello oss".data(using: .utf8)!
         let sourceObjectKey = "copyTestSourceFile"
         let targetObjectKey = "copyTestTargetFile"
-        let acls = ["default", "private", "public-read", "public-read-write"]
+        let acls = ["default", "private"]
 
         var request = PutObjectRequest(bucket: bucketName,
                                        key: sourceObjectKey,
@@ -1433,12 +1433,15 @@ final class ClientObjectBasicTests: BaseTestCase {
         XCTAssertNotNil(result?.nextAppendPosition)
         XCTAssertNotNil(result?.hashCrc64ecma)
 
-        let sealResult = try await client?.sealAppendObject(SealAppendObjectRequest(
+        await assertThrowsAsyncError(try await client?.sealAppendObject(SealAppendObjectRequest(
             bucket: bucketName,
             key: objectKey,
             position: data.count
-        ))
-        XCTAssertEqual(sealResult?.statusCode, 200)
+        ))) {
+            let error = $0 as? ServerError
+            XCTAssertEqual(400, error?.statusCode)
+            XCTAssertEqual("OperationNotSupported", error?.code)
+        }
 
         let deleteReqeust = DeleteObjectRequest(bucket: bucketName, key: objectKey)
         let _ = try await client?.deleteObject(deleteReqeust)

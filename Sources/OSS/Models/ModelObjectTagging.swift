@@ -95,7 +95,7 @@ public struct PutObjectTaggingRequest: RequestModel {
 public struct PutObjectTaggingResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 }
 

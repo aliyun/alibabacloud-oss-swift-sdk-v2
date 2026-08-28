@@ -119,6 +119,15 @@ public extension ClientError {
             message: "Endpoint is invalid."
         )
     }
+
+    static func accountIdInvalidError(
+        _ value: String
+    ) -> ClientError {
+        return ClientError(
+            code: "ValidationError",
+            message: "invalid account id: \(value), must be pure digits."
+        )
+    }
 }
 
 /// crc check error.

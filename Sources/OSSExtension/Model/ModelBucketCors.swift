@@ -178,18 +178,18 @@ public struct OptionObjectRequest: RequestModel {
 public struct OptionObjectResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The origin that is included in the request. If the request is denied, the response does not contain the header.
     public var accessControlAllowOrigin: Swift.String? { return commonProp.headers?[caseInsensitive: "Access-Control-Allow-Origin"] }
 
-    /// <no value>
+    /// The HTTP method of the request. If the request is denied, the response does not contain the header.
     public var accessControlAllowMethods: Swift.String? { return commonProp.headers?[caseInsensitive: "Access-Control-Allow-Methods"] }
 
-    /// <no value>
+    /// The list of headers included in the request. If the request includes headers that are not allowed, the response does not contain the headers and the request is denied.
     public var accessControlAllowHeaders: Swift.String? { return commonProp.headers?[caseInsensitive: "Access-Control-Allow-Headers"] }
 
-    /// <no value>
+    /// The list of headers that can be accessed by JavaScript applications on a client.
     public var accessControlExposeHeaders: Swift.String? { return commonProp.headers?[caseInsensitive: "Access-Control-Expose-Headers"] }
 
-    /// <no value>
+    /// The maximum duration for the browser to cache preflight results. Unit: seconds.
     public var accessControlMaxAge: Swift.Int? { return commonProp.headers?[caseInsensitive: "Access-Control-Max-Age"]?.toInt() }
 }

@@ -86,6 +86,12 @@ final class ClientBucketPolicyTests: BaseTestCase {
     }
     
     func testGetBucketPolicyStatusSuccess() async throws {
+        let _ = try await client?.putBucketPublicAccessBlock(PutBucketPublicAccessBlockRequest(
+            bucket: bucketName,
+            publicAccessBlockConfiguration: PublicAccessBlockConfiguration(
+                blockPublicAccess: false
+            )
+        ))
         let policy: [String : Any] = ["Version": "1",
                                       "Statement": [["Action": ["oss:PutObject",
                                                                 "oss:GetObject"],

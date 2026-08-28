@@ -303,7 +303,7 @@ public struct CompleteMultipartUploadRequest: RequestModel {
 public struct CompleteMultipartUploadResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 
     /// The name of the uploaded object.
@@ -397,7 +397,7 @@ public struct UploadPartCopyRequest: RequestModel {
 public struct UploadPartCopyResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the source object.
     public var copySourceVersionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-copy-source-version-id"] }
 
     /// The container that stores the copy result.

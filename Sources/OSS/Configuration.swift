@@ -10,6 +10,9 @@ public class Configuration {
     /// The region in which the bucket is located.
     public var region: String?
 
+    /// The Alibaba Cloud account ID (UID).
+    public var accountId: String?
+
     /// Max retry count, default value is 3
     public var retryMaxAttempts: Int?
 
@@ -50,6 +53,9 @@ public class Configuration {
 
     /// Request mode using cname. Defaut value is false
     public var useCname: Bool?
+
+    /// If the endpoint is a short-alias host, set this flag to true
+    public var useVirtualHostedAlias: Bool?
 
     /// Authentication with OSS Signature Version, Defaults is "v4"
     public var signerVersion: SignerVersion?
@@ -114,6 +120,15 @@ public extension Configuration {
     @discardableResult
     func withRegion(_ region: String) -> Self {
         self.region = region
+        return self
+    }
+
+    /// Set the Alibaba Cloud account ID (UID) used by the agentic bucket feature.
+    /// - Parameter accountId: The Alibaba Cloud account ID (UID).
+    /// - Returns: self
+    @discardableResult
+    func withAccountId(_ accountId: String) -> Self {
+        self.accountId = accountId
         return self
     }
 
@@ -231,6 +246,15 @@ public extension Configuration {
     @discardableResult
     func withUseCname(_ useCname: Bool) -> Self {
         self.useCname = useCname
+        return self
+    }
+
+    /// Set if the endpoint is a short-alias host, set this flag to true
+    /// - Parameter useVirtualHostedAlias: useVirtualHostedAlias
+    /// - Returns: self
+    @discardableResult
+    func withUseVirtualHostedAlias(_ useVirtualHostedAlias: Bool) -> Self {
+        self.useVirtualHostedAlias = useVirtualHostedAlias
         return self
     }
 

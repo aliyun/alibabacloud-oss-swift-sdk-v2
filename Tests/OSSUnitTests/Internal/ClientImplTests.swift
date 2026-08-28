@@ -146,6 +146,12 @@ final class ClientImplTests: XCTestCase {
         client = ClientImpl(config)
         XCTAssertEqual(client.options.addressStyle, .path)
 
+        // virtual-hosted-alias
+        config = Configuration.default()
+            .withUseVirtualHostedAlias(true)
+        client = ClientImpl(config)
+        XCTAssertEqual(client.options.addressStyle, .virtualHostedAlias)
+
         // ip
         config = Configuration.default()
             .withEndpoint("192.169.0.1")
@@ -283,6 +289,16 @@ final class ClientImplTests: XCTestCase {
             addressStyle: .cname
         )
         XCTAssertEqual("oss-cn-hangzhou.aliyuncs.com/special/test-key%2B123", host)
+
+        // virtualHostedAlias is agentic-only, the plain client falls back to virtual-hosted
+        input = OperationInput()
+        input.bucket = "test-bucket"
+        input.key = "test-key"
+        host = input.buildHostPath(
+            host: "oss-cn-hangzhou.aliyuncs.com",
+            addressStyle: .virtualHostedAlias
+        )
+        XCTAssertEqual("test-bucket.oss-cn-hangzhou.aliyuncs.com/test-key", host)
     }
 
     func testQueryString() {
@@ -442,48 +458,74 @@ final class ClientImplTests: XCTestCase {
     }
 
     func testVerifyOperation() {
+        let config = Configuration.default()
+            .withRegion("cn-hangzhou")
+            .withCredentialsProvider(AnonymousCredentialsProvider())
+        let client = ClientImpl(config)
+
         var input = OperationInput()
         input.bucket = "-bucket"
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Bucket name is invalid, got -bucket.", clientError?.message)
         }
 
         input.bucket = "bucket-"
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Bucket name is invalid, got bucket-.", clientError?.message)
         }
 
         input.bucket = "bucKet"
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Bucket name is invalid, got bucKet.", clientError?.message)
         }
 
         input.bucket = "12"
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Bucket name is invalid, got 12.", clientError?.message)
         }
 
         input.bucket = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Bucket name is invalid, got abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl.", clientError?.message)
         }
 
         input.bucket = "bucket-name"
-        XCTAssertNoThrow(try ClientImpl.verifyOperation(input: &input))
+        XCTAssertNoThrow(try client.verifyOperation(input: input))
 
         input.key = ""
-        XCTAssertThrowsError(try ClientImpl.verifyOperation(input: &input)) {
+        XCTAssertThrowsError(try client.verifyOperation(input: input)) {
             let clientError = $0 as? ClientError
             XCTAssertEqual("Object name is invalid, got .", clientError?.message)
         }
 
         input.key = "key"
-        XCTAssertNoThrow(try ClientImpl.verifyOperation(input: &input))
+        XCTAssertNoThrow(try client.verifyOperation(input: input))
+    }
+
+    func testVerifyOperationEndpointAndInitError() {
+        // No region and no endpoint -> endpoint cannot be resolved.
+        let noEndpoint = ClientImpl(
+            Configuration.default().withCredentialsProvider(AnonymousCredentialsProvider())
+        )
+        XCTAssertThrowsError(try noEndpoint.verifyOperation(input: OperationInput())) {
+            XCTAssertNotNil($0 as? ClientError)
+        }
+
+        // A deferred init error is surfaced before any input validation.
+        let badAccount = ClientImpl(
+            Configuration.default()
+                .withRegion("cn-hangzhou")
+                .withCredentialsProvider(AnonymousCredentialsProvider())
+                .withAccountId("abc")
+        )
+        XCTAssertThrowsError(try badAccount.verifyOperation(input: OperationInput())) {
+            XCTAssertEqual("ValidationError", ($0 as? ClientError)?.code)
+        }
     }
 }
 

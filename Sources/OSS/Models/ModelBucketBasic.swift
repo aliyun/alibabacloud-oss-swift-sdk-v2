@@ -225,6 +225,12 @@ public struct Bucket: Sendable {
     /// The time when the bucket is created. The time is in UTC.
     public var creationDate: Foundation.Date?
 
+    /// The resource type of the bucket.
+    public var bucketResourceType: Swift.String?
+
+    /// The agentic bucket name associated with this bucket.
+    public var agenticBucketName: Swift.String?
+
     public init(
         dataRedundancyType: Swift.String? = nil,
         extranetEndpoint: Swift.String? = nil,
@@ -243,7 +249,9 @@ public struct Bucket: Sendable {
         intranetEndpoint: Swift.String? = nil,
         accessControlList: AccessControlList? = nil,
         bucketPolicy: BucketPolicy? = nil,
-        creationDate: Foundation.Date? = nil
+        creationDate: Foundation.Date? = nil,
+        bucketResourceType: Swift.String? = nil,
+        agenticBucketName: Swift.String? = nil
     ) {
         self.dataRedundancyType = dataRedundancyType
         self.extranetEndpoint = extranetEndpoint
@@ -263,6 +271,8 @@ public struct Bucket: Sendable {
         self.accessControlList = accessControlList
         self.bucketPolicy = bucketPolicy
         self.creationDate = creationDate
+        self.bucketResourceType = bucketResourceType
+        self.agenticBucketName = agenticBucketName
     }
 }
 
@@ -401,11 +411,14 @@ public struct PutBucketRequest: RequestModel {
     /// For more information, see [View basic information of a resource group](~~151181~~) and [ListResourceGroups](~~158855~~).  You cannot configure a resource group for an Anywhere Bucket.
     public var resourceGroupId: Swift.String?
 
-    /// <no value>
+    /// The tagging of the bucket.
     public var bucketTagging: Swift.String?
 
     /// The container that stores the request body.
     public var createBucketConfiguration: CreateBucketConfiguration?
+
+    /// The agentic bucket name.
+    public var agenticBucket: Swift.String?
 
     public init(
         bucket: Swift.String? = nil,
@@ -413,6 +426,7 @@ public struct PutBucketRequest: RequestModel {
         resourceGroupId: Swift.String? = nil,
         bucketTagging: Swift.String? = nil,
         createBucketConfiguration: CreateBucketConfiguration? = nil,
+        agenticBucket: Swift.String? = nil,
         commonProp: RequestModelProp? = nil
     ) {
         self.bucket = bucket
@@ -420,6 +434,7 @@ public struct PutBucketRequest: RequestModel {
         self.resourceGroupId = resourceGroupId
         self.bucketTagging = bucketTagging
         self.createBucketConfiguration = createBucketConfiguration
+        self.agenticBucket = agenticBucket
         self.commonProp = commonProp ?? RequestModelProp()
     }
 }

@@ -103,13 +103,16 @@ class SerdeBucketBasicTests: XCTestCase {
         XCTAssertNil(input.headers["x-oss-acl"])
         XCTAssertNil(input.headers["x-oss-resource-group-id"])
         XCTAssertNil(input.headers["x-oss-bucket-tagging"])
-        XCTAssertEqual(try input.body?.readData()?.base64EncodedString(),
-                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?><CreateBucketConfiguration></CreateBucketConfiguration>".data(using: .utf8)?.base64EncodedString())
+        XCTAssertNil(input.headers["x-oss-agentic-bucket"])
+        XCTAssertNil(input.body)
+
+        let agenticBucket = "my-agentic-bucket"
 
         request = PutBucketRequest()
         request.acl = acl
         request.resourceGroupId = resourceGroupId
         request.bucketTagging = bucketTagging
+        request.agenticBucket = agenticBucket
 
         var createBucketConfiguration = CreateBucketConfiguration()
         createBucketConfiguration.storageClass = storageClass
@@ -120,6 +123,7 @@ class SerdeBucketBasicTests: XCTestCase {
         XCTAssertEqual(input.headers["x-oss-acl"], acl)
         XCTAssertEqual(input.headers["x-oss-resource-group-id"], resourceGroupId)
         XCTAssertEqual(input.headers["x-oss-bucket-tagging"], bucketTagging)
+        XCTAssertEqual(input.headers["x-oss-agentic-bucket"], agenticBucket)
         XCTAssertEqual(try input.body?.readData()?.base64EncodedString(),
                        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><CreateBucketConfiguration><StorageClass>\(storageClass)</StorageClass><DataRedundancyType>\(dataRedundancyType)</DataRedundancyType></CreateBucketConfiguration>".trim().data(using: .utf8)?.base64EncodedString())
     }
@@ -645,6 +649,8 @@ class SerdeBucketBasicTests: XCTestCase {
         bodyString.append("<KMSMasterKeyID>\(kMSMasterKeyID)</KMSMasterKeyID>")
         bodyString.append("<KMSDataEncryption>\(kMSDataEncryption)</KMSDataEncryption>")
         bodyString.append("</ServerSideEncryptionRule>")
+        bodyString.append("<BucketResourceType>AgenticBucketSpace</BucketResourceType>")
+        bodyString.append("<AgenticBucketName>my-agentic-1234567890-cn-hangzhou-ab-apsr</AgenticBucketName>")
         bodyString.append("</Bucket>")
         bodyString.append("</BucketInfo>")
 
@@ -675,6 +681,8 @@ class SerdeBucketBasicTests: XCTestCase {
         XCTAssertEqual(kMSDataEncryption, result.bucketInfo?.bucket?.serverSideEncryptionRule?.kMSDataEncryption)
         XCTAssertEqual(kMSMasterKeyID, result.bucketInfo?.bucket?.serverSideEncryptionRule?.kMSMasterKeyID)
         XCTAssertEqual(sSEAlgorithm, result.bucketInfo?.bucket?.serverSideEncryptionRule?.sSEAlgorithm)
+        XCTAssertEqual("AgenticBucketSpace", result.bucketInfo?.bucket?.bucketResourceType)
+        XCTAssertEqual("my-agentic-1234567890-cn-hangzhou-ab-apsr", result.bucketInfo?.bucket?.agenticBucketName)
     }
 
     func testDeserializeGetBucketLocation() {

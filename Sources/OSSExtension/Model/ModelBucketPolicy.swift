@@ -74,7 +74,7 @@ public struct GetBucketPolicyRequest : RequestModel {
 public struct GetBucketPolicyResult : ResultModel {
     public var commonProp: ResultModelProp = .init()
  
-    /// <no value>
+    /// The configurations of the bucket policy.
     public var body: ByteStream?
      
 }

@@ -138,7 +138,7 @@ public struct PutObjectRequest: RequestModel {
     /// Specify the speed limit value. The speed limit value ranges from  245760 to 838860800, with a unit of bit/s.
     public var trafficLimit: Swift.Int?
 
-    /// <no value>
+    /// The metadata of the object that you want to upload.
     public var metadata: [Swift.String: Swift.String]?
 
     /// The body of the request.
@@ -297,7 +297,7 @@ public struct CopyObjectRequest: RequestModel {
     /// Specify the speed limit value. The speed limit value ranges from  245760 to 838860800, with a unit of bit/s.
     public var trafficLimit: Swift.Int?
 
-    /// <no value>
+    /// The metadata of the object that you want to upload.
     public var metadata: [Swift.String: Swift.String]?
 
     public init(
@@ -520,7 +520,7 @@ public struct GetObjectResult: ResultModel {
     /// This header contains the following parameters: expiry-date that indicates the expiration time of the object, and rule-id that indicates the ID of the matched lifecycle rule.
     public var expiration: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-expiration"] }
 
-    /// <no value>
+    /// The requester, returned when the pay-by-requester mode is enabled.
     public var requestCharged: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-request-charged"] }
 
     /// A standard MIME type describing the format of the object data.
@@ -566,7 +566,7 @@ public struct GetObjectResult: ResultModel {
     /// Specifies whether the object retrieved was (true) or was not (false) a Delete  Marker.
     public var deleteMarker: Bool? { return commonProp.headers?[caseInsensitive: "x-oss-delete-marker"]?.toBool() }
 
-    /// <no value>
+    /// The object data returned in the response body.
     public var body: ByteStream?
 }
 
@@ -591,7 +591,7 @@ public struct AppendObjectRequest: RequestModel {
     /// Sees StorageClassType for supported values.
     public var storageClass: Swift.String?
 
-    /// <no value>
+    /// The metadata of the object that you want to upload.
     public var metadata: [Swift.String: Swift.String]?
 
     /// The web page caching behavior for the object. For more information, see **[RFC 2616](https://www.ietf.org/rfc/rfc2616.txt)**. Default value: null.
@@ -722,10 +722,10 @@ public struct DeleteObjectRequest: RequestModel {
 public struct DeleteObjectResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// Indicates whether the deleted version is a delete marker.
     public var deleteMarker: Swift.Bool? { return commonProp.headers?[caseInsensitive: "x-oss-delete-marker"]?.toBool() }
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 }
 
@@ -893,22 +893,22 @@ public struct GetObjectMetaRequest: RequestModel {
 public struct GetObjectMetaResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 
-    /// <no value>
+    /// The entity tag (ETag) that identifies the content of the object.
     public var etag: Swift.String? { return commonProp.headers?[caseInsensitive: "ETag"] }
 
-    /// <no value>
+    /// The size of the object content, in bytes.
     public var contentLength: Swift.Int? { return commonProp.headers?[caseInsensitive: "Content-Length"]?.toInt() }
 
-    /// <no value>
+    /// The time when the object was last accessed.
     public var lastAccessTime: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-last-access-time"] }
 
-    /// <no value>
+    /// The time when the object was last modified.
     public var lastModified: Swift.String? { return commonProp.headers?[caseInsensitive: "Last-Modified"] }
 
-    /// <no value>
+    /// The time when the object was transitioned to Cold Archive or Deep Cold Archive by lifecycle rules.
     public var transitionTime: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-transition-time"] }
 }
 
@@ -947,10 +947,10 @@ public struct RestoreObjectRequest: RequestModel {
 public struct RestoreObjectResult: ResultModel {
     public var commonProp: ResultModelProp = .init()
 
-    /// <no value>
+    /// The version ID of the object.
     public var versionId: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-version-id"] }
 
-    /// <no value>
+    /// The restoration priority for a Cold Archive or Deep Cold Archive object in the restored state.
     public var objectRestorePriority: Swift.String? { return commonProp.headers?[caseInsensitive: "x-oss-object-restore-priority"] }
 }
 
