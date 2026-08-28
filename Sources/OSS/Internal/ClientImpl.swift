@@ -11,6 +11,9 @@ struct InnerOptions {
     let logger: LogAgent?
     let urlsession: URLSession
     let sessionOwner: Bool
+    /// A deferred initialization error surfaced at the first operation instead of at
+    /// construction, e.g. lazy account-id validation.
+    let initError: Error?
 }
 
 struct PresignInnerResult {
@@ -43,7 +46,8 @@ class ClientImpl {
             userAgent: userAgent,
             logger: config.logger,
             urlsession: urlsession,
-            sessionOwner: sessionOwner
+            sessionOwner: sessionOwner,
+            initError: Self.resolveInitError(config)
         )
 
         // build execute stack
@@ -93,6 +97,18 @@ class ClientImpl {
         if self.innerOptions.sessionOwner {
             self.innerOptions.urlsession.finishTasksAndInvalidate()
         }
+    }
+
+    /// A deferred initialization error surfaced at the first operation instead of at
+    /// construction. An empty account id is allowed; a non-empty one must be pure digits.
+    static func resolveInitError(_ config: Configuration) -> Error? {
+        if let accountId = config.accountId,
+           !accountId.isEmpty,
+           !accountId.allSatisfy({ $0.isASCII && $0.isNumber })
+        {
+            return ClientError.accountIdInvalidError(accountId)
+        }
+        return nil
     }
 
     static func resolveConfig(_ config: Configuration) -> ClientOptions {
@@ -229,6 +245,8 @@ class ClientImpl {
             style = .cname
         } else if config.usePathStyle ?? false {
             style = .path
+        } else if config.useVirtualHostedAlias ?? false {
+            style = .virtualHostedAlias
         } else {
             style = .virtualHosted
         }
@@ -266,7 +284,17 @@ class ClientImpl {
         return featureFlags
     }
 
-    static func verifyOperation(input: inout OperationInput) throws {
+    /// Runs the pre-flight checks for an operation before any work is done: a deferred
+    /// initialization error surfaced at the first operation instead of at construction
+    /// (e.g. lazy account-id validation), a resolvable endpoint, and a valid bucket name
+    /// and object key.
+    func verifyOperation(input: OperationInput) throws {
+        if let initError = innerOptions.initError {
+            throw initError
+        }
+        if options.endpoint == nil {
+            throw ClientError.endpointInvalidError()
+        }
         if let bucketName = input.bucket, try !bucketName.isValidBucketName() {
             throw ClientError.bucketInvalidError(bucketName)
         }
@@ -279,8 +307,8 @@ class ClientImpl {
         with input: inout OperationInput,
         args opOpts: OperationOptions? = nil
     ) async throws -> OperationOutput {
-        // verify input
-        try Self.verifyOperation(input: &input)
+        // pre-flight checks: init error, endpoint, bucket & key
+        try verifyOperation(input: input)
 
         // build execute context
         let (request, context) = try buildRequestContext(with: &input, opts: opOpts)
@@ -304,8 +332,8 @@ class ClientImpl {
         with input: inout OperationInput,
         args opOpts: OperationOptions? = nil
     ) async throws -> PresignInnerResult {
-        // verify input
-        try Self.verifyOperation(input: &input)
+        // pre-flight checks: init error, endpoint, bucket & key
+        try verifyOperation(input: input)
 
         // build execute context
         let (request, context) = try buildRequestContext(with: &input, opts: opOpts)
@@ -377,9 +405,14 @@ class ClientImpl {
             handlers.forEach { value in responseHandlers.append(value) }
         }
 
-        // signing context
+        // signing context — resolve the physical bucket name for signing only; the input
+        // is never mutated (matches the endpointProvider/bucketNameResolver split).
+        var signingBucket = input.bucket
+        if let resolver = options.bucketNameResolver, input.bucket != nil {
+            signingBucket = try resolver(input)
+        }
         var signingContext = SigningContext(
-            bucket: input.bucket,
+            bucket: signingBucket,
             key: input.key,
             region: options.region,
             product: options.product,
@@ -396,11 +429,17 @@ class ClientImpl {
         guard let endpoint = options.endpoint else {
             throw ClientError.endpointInvalidError()
         }
-        let baseUrl = input.buildHostPath(
-            host: endpoint.hostPort(),
-            addressStyle: options.addressStyle
-        )
-        var url = "\(endpoint.scheme!)://\(baseUrl)"
+        var url: String
+        if let endpointProvider = options.endpointProvider {
+            // endpointProvider fully replaces the default host/path construction.
+            url = try endpointProvider(input)
+        } else {
+            let baseUrl = input.buildHostPath(
+                host: endpoint.hostPort(),
+                addressStyle: options.addressStyle
+            )
+            url = "\(endpoint.scheme!)://\(baseUrl)"
+        }
         let query = input.queryString()
         if !query.isEmpty {
             url = "\(url)?\(query)"
@@ -523,7 +562,7 @@ extension OperationInput {
     }
 }
 
-extension URL {
+public extension URL {
     func hostPort() -> String {
         guard var str = host else {
             return ""

@@ -13,7 +13,8 @@ let targets = ["AbortMultipartUpload", "AppendObject",
                "PutBucket", "PutBucketAcl", "PutBucketVersioning", "PutObject", "PutObjectACL", "PutObjectTagging", "PutSymlink",
                "RestoreObject",
                "UploadPart", "UploadPartCopy",
-               "Presign"]
+               "Presign",
+               "CreateAgenticBucket", "DeleteAgenticBucket", "GetAgenticBucket", "ListAgenticBuckets", "PutAgenticBucketStatus", "ListBucketSpaces", "CreateBucketSpace", "BucketSpace"]
 
 let package = Package(
     name: "alibabacloud-oss-samples",
@@ -38,6 +39,7 @@ let package = Package(
             name: $0,
             dependencies: [
                 .product(name: "AlibabaCloudOSS", package: "alibabacloud-oss-swift-sdk-v2"),
+                .product(name: "AlibabaCloudOSSAgentic", package: "alibabacloud-oss-swift-sdk-v2"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ],
             path: "./Sources/\($0)/"
