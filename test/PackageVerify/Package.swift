@@ -12,7 +12,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/aliyun/alibabacloud-oss-swift-sdk-v2.git",
-            from: "0.3.0"
+            from: "0.4.0"
         ),
     ],
     targets: [

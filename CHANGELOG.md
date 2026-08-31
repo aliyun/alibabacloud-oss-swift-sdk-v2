@@ -1,5 +1,12 @@
 # ChangeLog - Alibaba Cloud OSS SDK for Swift
 
+## 版本号：0.4.0 日期：2026-08-31
+### 变更内容
+- Feature：Add agentic bucket and bucket space support
+- Feature：Add `accountId` configuration
+- Feature：Add `useVirtualHostedAlias` configuration
+- Update：Add model field comments
+
 ## 版本号：0.3.0 日期：2026-06-29
 ### 变更内容
 - Feature：Add api SealAppendObject
