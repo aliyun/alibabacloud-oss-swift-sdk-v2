@@ -24,7 +24,9 @@ final class ClientBucketAccessMonitorTests: BaseTestCase {
             bucket: bucketName,
             accessMonitorConfiguration: AccessMonitorConfiguration(status: "Enabled")
         )))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketAccessMonitor
         let result = try await client?.getBucketAccessMonitor(
             GetBucketAccessMonitorRequest(bucket: bucketName)

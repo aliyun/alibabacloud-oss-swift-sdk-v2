@@ -80,18 +80,22 @@ final class ClientBucketEncryptionTests: BaseTestCase {
                 applyServerSideEncryptionByDefault: ApplyServerSideEncryptionByDefault(sseAlgorithm: "AES256")
             )
         )))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketEncryption
         let result = try await client?.getBucketEncryption(
             GetBucketEncryptionRequest(bucket: bucketName)
         )
         XCTAssertEqual(result?.serverSideEncryptionRule?.applyServerSideEncryptionByDefault?.sseAlgorithm, "AES256")
-        
+
         // DeleteBucketEncryption
         try await assertNoThrow(await client?.deleteBucketEncryption(
             DeleteBucketEncryptionRequest(bucket: bucketName)
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketEncryption
         try await assertThrowsAsyncError(await client?.getBucketEncryption(
             GetBucketEncryptionRequest(bucket: bucketName)

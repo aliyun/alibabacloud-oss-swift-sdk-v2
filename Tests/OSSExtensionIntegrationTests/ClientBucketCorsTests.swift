@@ -130,6 +130,8 @@ final class ClientBucketCorsTests: BaseTestCase {
         let result = try await client?.putBucketCors(request)
         XCTAssertEqual(result?.statusCode, 200)
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let getCorsRequest = GetBucketCorsRequest(bucket: bucketName)
         let getCorsResult = try await client?.getBucketCors(getCorsRequest)
         XCTAssertEqual(getCorsResult?.statusCode, 200)
@@ -173,6 +175,8 @@ final class ClientBucketCorsTests: BaseTestCase {
                                            corsConfiguration: corsConfig)
         let result = try await client?.putBucketCors(request)
         XCTAssertEqual(result?.statusCode, 200)
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
 
         let getCorsRequest = GetBucketCorsRequest(bucket: bucketName)
         let getCorsResult = try await client?.getBucketCors(getCorsRequest)

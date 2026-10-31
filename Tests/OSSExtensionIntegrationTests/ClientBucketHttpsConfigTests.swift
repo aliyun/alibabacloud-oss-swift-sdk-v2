@@ -30,6 +30,8 @@ final class ClientBucketHttpsConfigTests: BaseTestCase {
             )
         )))
         
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketHttpsConfig
         let result = try await client?.getBucketHttpsConfig(
             GetBucketHttpsConfigRequest(bucket: bucketName)

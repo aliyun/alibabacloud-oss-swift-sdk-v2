@@ -306,7 +306,7 @@ final class ClientObjectMultipartUploadTests: BaseTestCase {
                                         body: .file(file))
         request.progress = ProgressClosure { bytesSent, totalBytesSent, totalBytesExpectedToSend in
             Task {
-                await totalBytesSented.setValue(value: totalBytesSented.getValue() + Int(bytesSent))
+                await totalBytesSented.addValue(Int(bytesSent))
                 let value = await totalBytesSented.getValue()
                 XCTAssertEqual(value, Int(totalBytesSent))
                 XCTAssertEqual(Int(totalBytesExpectedToSend), size)

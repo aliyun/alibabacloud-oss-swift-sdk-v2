@@ -25,7 +25,9 @@ final class ClientBucketTransferaccelerationTests: BaseTestCase {
                 transferAccelerationConfiguration: TransferAccelerationConfiguration(enabled: true)
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getBucketTransferAcceleration(
             GetBucketTransferAccelerationRequest(
                 bucket: bucketName

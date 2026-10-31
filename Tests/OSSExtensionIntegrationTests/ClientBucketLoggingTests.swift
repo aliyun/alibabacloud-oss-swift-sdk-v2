@@ -28,16 +28,18 @@ final class ClientBucketLoggingTests: BaseTestCase {
                 bucketLoggingStatus: BucketLoggingStatus(loggingEnabled: LoggingEnabled(targetBucket: targetBucket, targetPrefix: "targetPrefix"))
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getBucketLogging(
             GetBucketLoggingRequest(bucket: bucketName)
         )
         XCTAssertEqual(result?.bucketLoggingStatus?.loggingEnabled?.targetBucket, targetBucket)
         XCTAssertEqual(result?.bucketLoggingStatus?.loggingEnabled?.targetPrefix, "targetPrefix")
-        
+
         try await cleanBucket(client: client!, bucket: targetBucket)
     }
-    
+
     func testPutBucketLoggingFail() async throws {
         var request = PutBucketLoggingRequest()
         try await assertThrowsAsyncError(await client?.putBucketLogging(request)) {
@@ -87,7 +89,9 @@ final class ClientBucketLoggingTests: BaseTestCase {
                 bucketLoggingStatus: BucketLoggingStatus(loggingEnabled: LoggingEnabled(targetBucket: targetBucket, targetPrefix: "targetPrefix"))
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // get logging
         var result = try await client?.getBucketLogging(
             GetBucketLoggingRequest(bucket: bucketName)
@@ -99,7 +103,9 @@ final class ClientBucketLoggingTests: BaseTestCase {
         try await assertNoThrow(await client?.deleteBucketLogging(
             DeleteBucketLoggingRequest(bucket: bucketName)
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // get logging
         result = try await client?.getBucketLogging(
             GetBucketLoggingRequest(bucket: bucketName)
@@ -134,7 +140,9 @@ final class ClientBucketLoggingTests: BaseTestCase {
                 )
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getUserDefinedLogFieldsConfig(
             GetUserDefinedLogFieldsConfigRequest(bucket: bucketName)
         )
@@ -191,7 +199,9 @@ final class ClientBucketLoggingTests: BaseTestCase {
                 )
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetUserDefinedLogFieldsConfig
         let result = try await client?.getUserDefinedLogFieldsConfig(
             GetUserDefinedLogFieldsConfigRequest(bucket: bucketName)
@@ -203,6 +213,8 @@ final class ClientBucketLoggingTests: BaseTestCase {
         try await assertNoThrow(await client?.deleteUserDefinedLogFieldsConfig(
             DeleteUserDefinedLogFieldsConfigRequest(bucket: bucketName)
         ))
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
 
         // GetUserDefinedLogFieldsConfig
         try await assertThrowsAsyncError(await client?.getUserDefinedLogFieldsConfig(

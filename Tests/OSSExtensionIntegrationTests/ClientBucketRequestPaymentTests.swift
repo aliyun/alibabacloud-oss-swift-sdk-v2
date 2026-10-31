@@ -24,7 +24,9 @@ final class ClientBucketRequestPaymentTests: BaseTestCase {
             bucket: bucketName,
             requestPaymentConfiguration: RequestPaymentConfiguration(payer: "Requester")
         )))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketRequestPayment
         let result = try await client?.getBucketRequestPayment(
             GetBucketRequestPaymentRequest(bucket: bucketName)

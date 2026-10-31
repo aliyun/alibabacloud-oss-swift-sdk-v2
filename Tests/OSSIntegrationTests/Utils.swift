@@ -53,6 +53,12 @@ actor ValueActor<T: Sendable> {
     }
 }
 
+extension ValueActor where T: Numeric {
+    func addValue(_ delta: T) {
+        value = value + delta
+    }
+}
+
 extension Data {
     func toBase64String() -> String {
         return base64EncodedString(options: .lineLength64Characters)
