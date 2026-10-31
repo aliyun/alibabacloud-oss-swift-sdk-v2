@@ -36,12 +36,14 @@ final class ClientBucketPolicyTests: BaseTestCase {
                 body: .data(json)
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getBucketPolicy(
             GetBucketPolicyRequest(bucket: bucketName)
         )
         XCTAssertNotNil(result?.body)
-        
+
         let getPolicy = try JSONSerialization.jsonObject(with: result!.body!.readData()!) as? [String: Any]
         XCTAssertEqual(getPolicy?["Version"] as? String, policy["Version"] as? String)
         XCTAssertEqual((getPolicy?["Statement"] as? [[String: Any]])?.first?["Action"] as? [String], (policy["Statement"] as? [[String: Any]])?.first?["Action"] as? [String])
@@ -92,6 +94,9 @@ final class ClientBucketPolicyTests: BaseTestCase {
                 blockPublicAccess: false
             )
         ))
+
+        try await Task.sleep(nanoseconds: 5 * 1_000_000_000)
+
         let policy: [String : Any] = ["Version": "1",
                                       "Statement": [["Action": ["oss:PutObject",
                                                                 "oss:GetObject"],
@@ -106,7 +111,9 @@ final class ClientBucketPolicyTests: BaseTestCase {
                 body: .data(json)
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getBucketPolicyStatus(
             GetBucketPolicyStatusRequest(bucket: bucketName)
         )
@@ -142,16 +149,20 @@ final class ClientBucketPolicyTests: BaseTestCase {
                 body: .data(json)
             )
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         let result = try await client?.getBucketPolicy(
             GetBucketPolicyRequest(bucket: bucketName)
         )
         XCTAssertNotNil(result?.body)
-        
+
         await assertNoThrow(try await client?.deleteBucketPolicy(
             DeleteBucketPolicyRequest(bucket: bucketName)
         ))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         await assertThrowsAsyncError(try await client?.getBucketPolicy(
             GetBucketPolicyRequest(bucket: bucketName)
         )) {

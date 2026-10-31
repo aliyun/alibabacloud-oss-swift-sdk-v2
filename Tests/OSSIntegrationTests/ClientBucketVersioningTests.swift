@@ -28,6 +28,8 @@ final class ClientBucketVersioningTests: BaseTestCase {
                                                                     versioningConfiguration: VersioningConfiguration(status: "Enabled"))
         try await assertNoThrow(await client?.putBucketVersioning(putBucketVersioningRequest))
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         getBucketVersioningRequest = GetBucketVersioningRequest(bucket: bucketName)
         getBucketVersioningResult = try await client?.getBucketVersioning(getBucketVersioningRequest)
         XCTAssertEqual(getBucketVersioningResult?.statusCode, 200)
@@ -36,6 +38,8 @@ final class ClientBucketVersioningTests: BaseTestCase {
         putBucketVersioningRequest = PutBucketVersioningRequest(bucket: bucketName,
                                                                 versioningConfiguration: VersioningConfiguration(status: "Suspended"))
         try await assertNoThrow(await client?.putBucketVersioning(putBucketVersioningRequest))
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
 
         getBucketVersioningRequest = GetBucketVersioningRequest(bucket: bucketName)
         getBucketVersioningResult = try await client?.getBucketVersioning(getBucketVersioningRequest)

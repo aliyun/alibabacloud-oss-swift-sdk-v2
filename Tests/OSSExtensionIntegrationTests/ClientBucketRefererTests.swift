@@ -30,7 +30,9 @@ final class ClientBucketRefererTests: BaseTestCase {
                 refererBlacklist: RefererBlacklist(referers: ["http://www.refuse.com", "https://*.hack.com"])
             )
         )))
-        
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketReferer
         let result = try await client?.getBucketReferer(
             GetBucketRefererRequest(bucket: bucketName)

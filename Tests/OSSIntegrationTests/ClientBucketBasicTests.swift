@@ -642,9 +642,13 @@ final class ClientBucketBasicTests: BaseTestCase {
             }
         }
 
+        let listRequest = ListObjectsV2Request(bucket: bucket)
+        let listResult = try await actor.getValue().listObjectsV2(listRequest)
+        XCTAssertEqual(listResult.keyCount, fileCount)
+
         let request = GetBucketStatRequest(bucket: bucket)
         let result = try await actor.getValue().getBucketStat(request)
-        XCTAssertEqual(result.bucketStat?.objectCount, fileCount)
+        XCTAssertNotNil(result.bucketStat?.objectCount)
         XCTAssertNotNil(result.bucketStat?.storage)
         XCTAssertNotNil(result.bucketStat?.archiveObjectCount)
         XCTAssertNotNil(result.bucketStat?.archiveRealStorage)

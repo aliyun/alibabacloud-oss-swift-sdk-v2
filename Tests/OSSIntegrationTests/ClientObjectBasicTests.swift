@@ -312,7 +312,7 @@ final class ClientObjectBasicTests: BaseTestCase {
 
     func testPutObjectAndCancel() async throws {
         let objectKey = randomObjectName()
-        let file = createTestFile(objectKey, 5 * 1024 * 1024)
+        let file = createTestFile(objectKey, 20 * 1024 * 1024)
         let request = PutObjectRequest(bucket: bucketName,
                                        key: objectKey,
                                        body: .file(URL(fileURLWithPath: file!)))
@@ -1747,6 +1747,9 @@ final class ClientObjectBasicTests: BaseTestCase {
 
         try await assertNoThrow(await client?.putBucketVersioning(PutBucketVersioningRequest(bucket: bucketName,
                                                                                              versioningConfiguration: VersioningConfiguration(status: "Enabled"))))
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         var objects: [DeleteObject] = []
         for i in 20 ..< 30 {
             let object = objectKey.appending("\(i)")

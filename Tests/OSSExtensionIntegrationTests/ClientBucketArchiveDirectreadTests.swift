@@ -25,6 +25,8 @@ final class ClientBucketArchiveDirectreadTests: BaseTestCase {
             archiveDirectReadConfiguration: ArchiveDirectReadConfiguration(enabled: true)
         )))
         
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         // GetBucketArchiveDirectRead
         let result = try await client?.getBucketArchiveDirectRead(
             GetBucketArchiveDirectReadRequest(bucket: bucketName)

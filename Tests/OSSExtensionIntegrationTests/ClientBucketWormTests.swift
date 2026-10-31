@@ -31,6 +31,8 @@ final class ClientBucketWormTests: BaseTestCase {
                                                                   initiateWormConfiguration: InitiateWormConfiguration(retentionPeriodInDays: 1))
         try await assertNoThrow(await client?.initiateBucketWorm(initiateBucketWormRequest))
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         let getBucketWormResult = try await client?.getBucketWorm(getBucketWormRequest)
         XCTAssertEqual(getBucketWormResult?.wormConfiguration?.retentionPeriodInDays, 1)
@@ -82,12 +84,16 @@ final class ClientBucketWormTests: BaseTestCase {
                                                                   initiateWormConfiguration: InitiateWormConfiguration(retentionPeriodInDays: 1))
         try await assertNoThrow(await client?.initiateBucketWorm(initiateBucketWormRequest))
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         var getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         let getBucketWormResult = try await client?.getBucketWorm(getBucketWormRequest)
         XCTAssertEqual(getBucketWormResult?.wormConfiguration?.retentionPeriodInDays, 1)
 
         let request = AbortBucketWormRequest(bucket: bucketName)
         try await assertNoThrow(await client?.abortBucketWorm(request))
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
 
         getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         await assertThrowsAsyncError(try await client?.getBucketWorm(getBucketWormRequest)) {
@@ -126,6 +132,8 @@ final class ClientBucketWormTests: BaseTestCase {
         let request = CompleteBucketWormRequest(bucket: bucketName, wormId: getBucketWormResult?.wormConfiguration?.wormId)
         try await assertNoThrow(await client?.completeBucketWorm(request))
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         getBucketWormResult = try await client?.getBucketWorm(getBucketWormRequest)
         XCTAssertEqual(getBucketWormResult?.wormConfiguration?.retentionPeriodInDays, 1)
@@ -161,6 +169,8 @@ final class ClientBucketWormTests: BaseTestCase {
         let completeBucketWormRequest = CompleteBucketWormRequest(bucket: bucketName, wormId: initiateBucketWormResult?.headers?["x-oss-worm-id"])
         try await assertNoThrow(await client?.completeBucketWorm(completeBucketWormRequest))
 
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
+
         var getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         var getBucketWormResult = try await client?.getBucketWorm(getBucketWormRequest)
         XCTAssertEqual(getBucketWormResult?.wormConfiguration?.retentionPeriodInDays, 1)
@@ -170,6 +180,8 @@ final class ClientBucketWormTests: BaseTestCase {
                                               wormId: getBucketWormResult?.wormConfiguration?.wormId,
                                               extendWormConfiguration: ExtendWormConfiguration(retentionPeriodInDays: 2))
         try await assertNoThrow(await client?.extendBucketWorm(request))
+
+        try await Task.sleep(nanoseconds: 2 * 1_000_000_000)
 
         getBucketWormRequest = GetBucketWormRequest(bucket: bucketName)
         getBucketWormResult = try await client?.getBucketWorm(getBucketWormRequest)
