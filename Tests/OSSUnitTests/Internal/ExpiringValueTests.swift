@@ -16,7 +16,9 @@ final class ExpiringValueTests: XCTestCase {
 
     /// Test an expired value is updated
     func testExpiredValue() async throws {
-        let expiringValue = ExpiringValue<Int>(0, expires: Date())
+        // Expiry must be strictly in the past: an expiry equal to now is
+        // classified as "about to expire" and returns the stale value.
+        let expiringValue = ExpiringValue<Int>(0, expires: Date().addingTimeInterval(-1))
         let value = try await expiringValue.getValue {
             try await Task.sleep(nanoseconds: 1000)
             return (1, Date())
@@ -28,7 +30,10 @@ final class ExpiringValueTests: XCTestCase {
     /// new task to get new value
     #if swift(>=5.9) // makeStream doesn't exist in earlier versions of swift
         func testJustAboutToExpireValue() async throws {
-            let expiringValue = ExpiringValue<Int>(0, expires: Date() + 1, threshold: 3)
+            // Keep a wide margin between expiry and threshold so scheduler
+            // stalls cannot turn "about to expire" into "expired".
+            let threshold: TimeInterval = 60
+            let expiringValue = ExpiringValue<Int>(0, expires: Date() + threshold / 2, threshold: threshold)
             let (stream, source) = AsyncStream<Void>.makeStream()
             let value = try await expiringValue.getValue {
                 source.finish()
