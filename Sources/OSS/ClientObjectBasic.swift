@@ -142,7 +142,12 @@ public extension Client {
                 value: ProgressDelegateDesc(delegate: ProgressWithRetry(progress), upload: true)
             )
         }
-        if clientImpl.hasFeatureFlag(FeatureFlag.enableCRC64CheckUpload) {
+        // The x-oss-hash-crc64ecma header returned by AppendObject is the CRC64 of the whole
+        // object, not of this request body. It can only be compared with the body CRC when the
+        // append starts at position 0 (i.e. the object is being created). For position > 0 the
+        // comparison always fails *after* the data has already been written, which surfaces as a
+        // bogus "crc is inconsistent" error. Only register the checker for the first append.
+        if clientImpl.hasFeatureFlag(FeatureFlag.enableCRC64CheckUpload), (request.position ?? 0) == 0 {
             input.metadata.append(
                 key: AttributeKeys.responseHandler,
                 value: ChekerUploadCrcResponseHandler(crc: request.initHashCrc64)
